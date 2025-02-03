@@ -46,7 +46,6 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                filled: true,
               ),
               onChanged: (value) => setState(() => searchQuery = value.toLowerCase()),
             ),
@@ -118,7 +117,7 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
         return Card(
           margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: ListTile(
-            title: Text(exercise.name),
+            title: Text(exercise.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             leading: GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -140,7 +139,7 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
                 ),
               ),
             ),
-            subtitle: Text(provider.getMuscleNameById(exercise.muscleId)),
+            subtitle: Text(provider.getMuscleNameById(exercise.muscleId), style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.5))),
             onTap: () => Navigator.pop(context, exercise),
           ),
         );

@@ -109,7 +109,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
           title: ValueListenableBuilder<Duration>(
             valueListenable: _durationNotifier,
             builder: (context, duration, child) {
-              return Text(_formatDuration(duration)); // Only timer text updates, not the whole widget
+              return Text(_formatDuration(duration), style: TextStyle(fontWeight: FontWeight.bold)); // Only timer text updates, not the whole widget
             },
           ),
           actions: [
@@ -118,12 +118,12 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.teal,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   'FINISH',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -133,47 +133,82 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
         body: Column(
           children: [
         Expanded(
-        child: ListView.builder(
-        itemCount: _exercises.length,
-          itemBuilder: (context, index) => _buildExerciseCard(index),
+        child: ReorderableListView.builder(
+          itemCount: _exercises.length,
+          onReorder: (oldIndex, newIndex) {
+            setState(() {
+              if (newIndex > oldIndex) newIndex -= 1;
+              final item = _exercises.removeAt(oldIndex);
+              _exercises.insert(newIndex, item);
+            });
+          },
+          itemBuilder: (context, index) => _buildExerciseCard(index, key: ValueKey(_exercises[index])),
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            minimumSize: Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onPressed: () async {
-            final exercise = await Navigator.push<ExerciseWithMuscle>(
-              context,
-              MaterialPageRoute(builder: (context) => SelectExerciseScreen()),
-            );
-
-            if (exercise != null) {
-              setState(() {
-                _exercises.add(
-                  WorkoutPlanExercise(
-                    exercise: exercise,
-                    sets: [WorkoutSet(setNumber: 1, weight: 0, reps: 0, isFinished: 0)],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        for (var exercise in _exercises) {
+                          for (var set in exercise.sets) {
+                            set.isFinished = 1;
+                          }
+                        }
+                      });
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.teal, width: 2), // Green outline
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: Icon(Icons.check, color: Colors.teal),
+                    label: Text('All', style: TextStyle(color: Colors.teal)),
                   ),
-                );
-              });
-            }
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add),
-              SizedBox(width: 8),
-              Text('Add Exercise', style: TextStyle(fontSize: 16)),
-            ],
-          ),
+                  SizedBox(width: 12), // Space between buttons
+
+                  // "Add Exercise" Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () async {
+                        final exercise = await Navigator.push<ExerciseWithMuscle>(
+                          context,
+                          MaterialPageRoute(builder: (context) => SelectExerciseScreen()),
+                        );
+
+                        if (exercise != null) {
+                          setState(() {
+                            _exercises.add(
+                              WorkoutPlanExercise(
+                                exercise: exercise,
+                                sets: [WorkoutSet(setNumber: 1, weight: 0, reps: 0, isFinished: 0)],
+                              ),
+                            );
+                          });
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add),
+                          SizedBox(width: 8),
+                          Text('Add Exercise', style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]
         ),
-      )]),
       ),
     );
   }
@@ -205,9 +240,10 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
     return false;
   }
 
-  Widget _buildExerciseCard(int exerciseIndex) {
+  Widget _buildExerciseCard(int exerciseIndex, {required Key key}) {
     final exercise = _exercises[exerciseIndex];
     bool isExpanded = _expandedState[exerciseIndex] ?? false;
+    bool allSetsCompleted = exercise.sets.every((set) => set.isFinished == 1);
 
     return Dismissible(
       key: Key('${exercise.exercise.id}_${exerciseIndex}'),
@@ -248,8 +284,19 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                 ),
               ),
             ),
-            title: Text(exercise.exercise.name),
-            subtitle: Text('${exercise.sets.where((set) => set.isFinished == 1).length}/${exercise.sets.length} sets'),
+            title: Text(exercise.exercise.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            subtitle: Row(
+              children: [
+                if (allSetsCompleted) ...[
+                  Icon(Icons.check_circle, color: Colors.green, size: 18,),
+                  SizedBox(width: 3),
+                ],
+                Text(
+                  '${exercise.sets.where((set) => set.isFinished == 1).length}/${exercise.sets.length} sets',
+                  style: TextStyle(color: allSetsCompleted ? Colors.green : Colors.white.withValues(alpha: 0.5)),
+                ),
+              ],
+            ),
             trailing: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
             onExpansionChanged: (expanded) {
               setState(() => _expandedState[exerciseIndex] = expanded);
@@ -293,6 +340,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                               controller: weightController,
                               focusNode: weightFocusNode,
                               onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                               decoration: InputDecoration(
                                 labelText: 'Weight',
                                 suffixText: _isKgUnit ? 'kg' : 'lb',
@@ -316,6 +364,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                               controller: repsController,
                               focusNode: repsFocusNode,
                               onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                               decoration: InputDecoration(
                                 labelText: 'Reps',
                               ),
@@ -342,7 +391,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                                 });
                               },
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(15),
                               ),
                               activeColor: Colors.green,
                               checkColor: Colors.white,

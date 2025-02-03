@@ -179,8 +179,8 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                 ),
               ),
             ),
-            title: Text(exercise.exercise.name),
-            subtitle: Text('${exercise.sets.length} sets'),
+            title: Text(exercise.exercise.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            subtitle: Text('${exercise.sets.length} sets', style: TextStyle(color: Colors.white.withValues(alpha: 0.5))),
             trailing: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
             onExpansionChanged: (expanded) {
               setState(() => _expandedState[exerciseIndex] = expanded);
@@ -223,6 +223,7 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                               controller: weightController,
                               focusNode: weightFocusNode,
                               onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                               decoration: InputDecoration(
                                 labelText: 'Weight',
                                 suffixText: _isKgUnit ? 'kg' : 'lb',
@@ -246,6 +247,7 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                               controller: repsController,
                               focusNode: repsFocusNode,
                               onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                               decoration: InputDecoration(
                                 labelText: 'Reps',
                               ),

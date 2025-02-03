@@ -97,17 +97,6 @@ class WorkoutOverviewScreen extends StatelessWidget {
 
             SizedBox(height: 24),
             Text(
-              'Muscles Trained This Week',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            WeeklyMuscleOverviewCard(),
-
-            SizedBox(height: 24),
-            Text(
               'Last Workouts',
               style: TextStyle(
                 fontSize: 18,
@@ -244,6 +233,18 @@ class WorkoutOverviewScreen extends StatelessWidget {
                 );
               },
             ),
+
+            SizedBox(height: 24),
+            Text(
+              'Muscles Trained This Week',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8),
+            WeeklyMuscleOverviewCard(),
+
           ],
         ),
       ),

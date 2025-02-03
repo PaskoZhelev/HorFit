@@ -166,7 +166,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                       exercise.name,
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
-                    subtitle: Text(exercise.muscle),
+                    subtitle: Text(exercise.muscle, style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.5))),
                     onTap: () {
                       Navigator.push(
                         context,

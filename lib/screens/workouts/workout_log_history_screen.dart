@@ -140,7 +140,7 @@ class WorkoutLogDetailScreen extends StatelessWidget {
                             ),
                           ),
                           title: Text(exercise['name']),
-                          subtitle: Text('${sets.where((set) => set['is_finished'] == 1).length}/${sets.length} sets'),
+                          subtitle: Text('${sets.where((set) => set['is_finished'] == 1).length}/${sets.length} sets', style: TextStyle(color: Colors.white.withValues(alpha: 0.5))),
                           children: [
                             Padding(
                               padding: EdgeInsets.all(16),
