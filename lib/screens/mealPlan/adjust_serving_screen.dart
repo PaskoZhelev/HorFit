@@ -64,6 +64,7 @@ class _AdjustServingScreenState extends State<AdjustServingScreen> {
                       TextSelectionThemeData(selectionColor: Colors.teal)),
               child: TextField(
                 controller: _servingSizeController,
+                onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Serving Size (${widget.food.measure})',

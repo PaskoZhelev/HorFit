@@ -234,6 +234,7 @@ class _AddFoodPlanScreenState extends State<AddFoodPlanScreen> {
             children: [
               TextField(
                 controller: _planNameController,
+                onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                 decoration: InputDecoration(
                   hintText: 'Enter Plan Name',
                   border: InputBorder.none,

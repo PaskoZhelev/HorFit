@@ -7,6 +7,7 @@ class Exercise {
   final int bodyPartId;
   final String? mediaId;
   final String ownType;
+  final int priority;
 
   Exercise({
     required this.id,
@@ -17,6 +18,7 @@ class Exercise {
     required this.bodyPartId,
     this.mediaId,
     this.ownType = 'custom',
+    required this.priority
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class Exercise {
       bodyPartId: json['bodyPart_id'],
       mediaId: json['mediaId'],
       ownType: json['own_type'] ?? 'custom',
+      priority: json['priority'],
     );
   }
 
@@ -42,6 +45,7 @@ class Exercise {
       'bodyPart_id': bodyPartId,
       'mediaId': mediaId,
       'own_type': ownType,
+      'priority': priority,
     };
   }
 }
@@ -116,6 +120,7 @@ class ExerciseWithMuscle {
   final int bodyPartId;
   final String? mediaId;
   final String ownType;
+  final int priority;
 
   ExerciseWithMuscle({
     required this.id,
@@ -127,6 +132,7 @@ class ExerciseWithMuscle {
     required this.bodyPartId,
     this.mediaId,
     this.ownType = 'custom',
+    required this.priority,
   });
 
   factory ExerciseWithMuscle.fromJson(Map<String, dynamic> json) {
@@ -140,6 +146,7 @@ class ExerciseWithMuscle {
       bodyPartId: json['bodyPart_id'],
       mediaId: json['mediaId'],
       ownType: json['own_type'] ?? 'custom',
+      priority: json['priority'],
     );
   }
 
@@ -154,6 +161,7 @@ class ExerciseWithMuscle {
       'bodyPart_id': bodyPartId,
       'mediaId': mediaId,
       'own_type': ownType,
+      'priority': priority,
     };
   }
 }

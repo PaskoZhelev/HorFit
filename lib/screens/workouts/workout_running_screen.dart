@@ -260,6 +260,8 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                 final set = entry.value;
                 final weightController = TextEditingController(text: set.weight.toString());
                 final repsController = TextEditingController(text: set.reps.toString());
+                final weightFocusNode = FocusNode();
+                final repsFocusNode = FocusNode();
 
                 return Dismissible(
                   key: Key('set_${exerciseIndex}_${setIndex}'),
@@ -289,15 +291,20 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                           Expanded(
                             child: TextField(
                               controller: weightController,
+                              focusNode: weightFocusNode,
+                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                               decoration: InputDecoration(
                                 labelText: 'Weight',
                                 suffixText: _isKgUnit ? 'kg' : 'lb',
                               ),
                               keyboardType: TextInputType.number,
-                              onTap: () => weightController.selection = TextSelection(
-                                baseOffset: 0,
-                                extentOffset: weightController.text.length,
-                              ),
+                              onTap: () {
+                                weightFocusNode.requestFocus();
+                                weightController.selection = TextSelection(
+                                  baseOffset: 0,
+                                  extentOffset: weightController.text.length,
+                                );
+                              },
                               onChanged: (value) {
                                 set.weight = double.tryParse(value) ?? 0;
                               },
@@ -307,14 +314,19 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                           Expanded(
                             child: TextField(
                               controller: repsController,
+                              focusNode: repsFocusNode,
+                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                               decoration: InputDecoration(
                                 labelText: 'Reps',
                               ),
                               keyboardType: TextInputType.number,
-                              onTap: () => repsController.selection = TextSelection(
-                                baseOffset: 0,
-                                extentOffset: repsController.text.length,
-                              ),
+                              onTap: () {
+                                repsFocusNode.requestFocus();
+                                repsController.selection = TextSelection(
+                                  baseOffset: 0,
+                                  extentOffset: repsController.text.length,
+                                );
+                              },
                               onChanged: (value) {
                                 set.reps = int.tryParse(value) ?? 0;
                               },

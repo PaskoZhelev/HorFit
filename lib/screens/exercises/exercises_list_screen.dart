@@ -44,12 +44,15 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     final provider = Provider.of<ExerciseProvider>(context, listen: false);
     setState(() {
       filteredExercises = provider.exercises.where((exercise) {
-        bool matchesSearch = exercise.name.toLowerCase().contains(searchQuery.toLowerCase());
-        // List<String> searchWords = searchQuery.split(' ').map((word) => word.trim().toLowerCase()).toList();
-        //
-        // bool matchesSearch = searchWords.any((word) =>
-        //     exercise.name.toLowerCase().contains(word)
-        // );
+        //exact match
+        //bool matchesSearch = exercise.name.toLowerCase().contains(searchQuery.toLowerCase());
+
+        //approximate match
+        List<String> searchWords = searchQuery.split(' ').map((word) => word.trim().toLowerCase()).toList();
+
+        bool matchesSearch = searchWords.any((word) =>
+            exercise.name.toLowerCase().contains(word)
+        );
         if(searchQuery.isEmpty)
         {
           matchesSearch = true;
@@ -75,6 +78,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
             child: TextField(
               controller: _searchController,
               focusNode: _searchFocusNode,
+              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
               decoration: InputDecoration(
                 hintText: 'Search exercises...',
                 prefixIcon: Icon(Icons.search),
@@ -124,7 +128,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                     selected: selectedMuscleId == muscle.id,
                     onSelected: (_) {
                       setState(() {
-                        selectedMuscleId = muscle.id;
+                        if(selectedMuscleId == muscle.id)
+                        {
+                          selectedMuscleId = null;
+                        } else {
+                          selectedMuscleId = muscle.id;
+                        }
+
                         filterExercises(context);
                       });
                     },

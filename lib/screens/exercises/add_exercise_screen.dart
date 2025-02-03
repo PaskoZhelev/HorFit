@@ -45,6 +45,7 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
       muscleId: selectedMuscleId!,
       equipmentId: 0,
       bodyPartId: 0,
+      priority: 10,
       mediaId: null,
       ownType: 'custom',
     );

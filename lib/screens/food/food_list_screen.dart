@@ -41,6 +41,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
             child: TextField(
               controller: _searchController,
               focusNode: _searchFocusNode,
+              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Search Foods',

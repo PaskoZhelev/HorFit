@@ -32,6 +32,7 @@ class _SelectFoodScreenState extends State<SelectFoodScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
+              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
               decoration: InputDecoration(
                 labelText: 'Search Foods',
                 prefixIcon: Icon(Icons.search),

@@ -18,6 +18,7 @@ class CreateWorkoutPlanScreen extends StatefulWidget {
 
 class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
   final _nameController = TextEditingController();
+  final _nameFocusNode = FocusNode();
   final List<WorkoutPlanExercise> _exercises = [];
   bool _isEditing = false;
   final Map<int, bool> _expandedState = {};
@@ -113,6 +114,11 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
             padding: EdgeInsets.all(16),
             child: TextField(
               controller: _nameController,
+              focusNode: _nameFocusNode,
+              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              onTap: () {
+                _nameFocusNode.requestFocus();
+              },
               decoration: InputDecoration(
                 labelText: 'Workout Name',
                 border: OutlineInputBorder(),
@@ -184,6 +190,8 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                   final setIndex = entry.key;
                   final set = entry.value;
                   final weightController = TextEditingController(text: set.weight.toString());
+                  final weightFocusNode = FocusNode();
+                  final repsFocusNode = FocusNode();
                   final repsController = TextEditingController(text: set.reps.toString());
 
                   return Dismissible(
@@ -213,15 +221,20 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                           Expanded(
                             child: TextField(
                               controller: weightController,
+                              focusNode: weightFocusNode,
+                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                               decoration: InputDecoration(
                                 labelText: 'Weight',
                                 suffixText: _isKgUnit ? 'kg' : 'lb',
                               ),
                               keyboardType: TextInputType.number,
-                              onTap: () => weightController.selection = TextSelection(
-                                baseOffset: 0,
-                                extentOffset: weightController.text.length,
-                              ),
+                              onTap: () {
+                                weightFocusNode.requestFocus();
+                                weightController.selection = TextSelection(
+                                  baseOffset: 0,
+                                  extentOffset: weightController.text.length,
+                                );
+                              },
                               onChanged: (value) {
                                 set.weight = double.tryParse(value) ?? 0;
                               },
@@ -231,14 +244,19 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                           Expanded(
                             child: TextField(
                               controller: repsController,
+                              focusNode: repsFocusNode,
+                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                               decoration: InputDecoration(
                                 labelText: 'Reps',
                               ),
                               keyboardType: TextInputType.number,
-                              onTap: () => repsController.selection = TextSelection(
-                                baseOffset: 0,
-                                extentOffset: repsController.text.length,
-                              ),
+                              onTap: () {
+                                repsFocusNode.requestFocus();
+                                repsController.selection = TextSelection(
+                                  baseOffset: 0,
+                                  extentOffset: repsController.text.length,
+                                );
+                              },
                               onChanged: (value) {
                                 set.reps = int.tryParse(value) ?? 0;
                               },

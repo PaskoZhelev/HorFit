@@ -382,7 +382,8 @@ class WorkoutProvider with ChangeNotifier {
   }
 
   Future<Map<String, int>> getWeeklyMuscleOverview() async {
-    final now = DateTime.now();
+    var now = DateTime.now();
+    now = DateTime(now.year, now.month, now.day);
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
     final endOfWeek = startOfWeek.add(Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 

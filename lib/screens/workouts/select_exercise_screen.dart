@@ -32,6 +32,7 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
             padding: EdgeInsets.all(8.0),
             child: TextField(
               controller: _searchController,
+              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
               decoration: InputDecoration(
                 hintText: 'Search exercises...',
                 prefixIcon: Icon(Icons.search),
@@ -79,7 +80,13 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
                         selected: selectedMuscleId == muscle.id,
                         onSelected: (_) {
                           setState(() {
-                            selectedMuscleId = muscle.id;
+                            if(selectedMuscleId == muscle.id)
+                            {
+                              selectedMuscleId = null;
+                            } else {
+                              selectedMuscleId = muscle.id;
+                            }
+
                           });
                         },
                       ),

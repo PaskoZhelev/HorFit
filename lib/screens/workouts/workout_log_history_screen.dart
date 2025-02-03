@@ -122,6 +122,7 @@ class WorkoutLogDetailScreen extends StatelessWidget {
                                       bodyPartId: exercise['bodyPart_id'],
                                       mediaId: exercise['mediaId'],
                                       ownType: exercise['own_type'],
+                                      priority: exercise['priority'],
                                       muscle: '',  // Add if available
                                     ),
                                   ),

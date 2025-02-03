@@ -492,6 +492,7 @@ class DatabaseHelper {
       FROM exercises
       INNER JOIN muscles ON exercises.muscle_id = muscles.id
       ORDER BY
+        exercises.priority DESC,
         exercises.name ASC
     ''');
 
