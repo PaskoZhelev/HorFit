@@ -193,14 +193,21 @@ class WorkoutExercise {
   int? id;
   int workoutId;
   String exerciseId;
+  int orderIndex;  // Add this field
 
-  WorkoutExercise({this.id, required this.workoutId, required this.exerciseId});
+  WorkoutExercise({
+    this.id,
+    required this.workoutId,
+    required this.exerciseId,
+    required this.orderIndex,  // Add this parameter
+  });
 
   factory WorkoutExercise.fromJson(Map<String, dynamic> json) {
     return WorkoutExercise(
       id: json['id'],
       workoutId: json['workout_id'],
       exerciseId: json['exercise_id'],
+      orderIndex: json['order_index'],  // Add this field
     );
   }
 
@@ -209,6 +216,7 @@ class WorkoutExercise {
       'id': id,
       'workout_id': workoutId,
       'exercise_id': exerciseId,
+      'order_index': orderIndex,  // Add this field
     };
   }
 }

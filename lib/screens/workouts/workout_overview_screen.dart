@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hor_fit/providers/workout_provider.dart';
+import 'package:hor_fit/screens/workouts/last_workouts_screen.dart';
 import 'package:hor_fit/screens/workouts/monthly_workout_log_screen.dart';
 import 'package:hor_fit/screens/workouts/select_workout_screen.dart';
 import 'package:hor_fit/screens/workouts/weekly_muscle_overview_card.dart';
@@ -36,7 +37,7 @@ class WorkoutOverviewScreen extends StatelessWidget {
                         height: 60,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: mainColor1.withOpacity(0.1),
+                          color: mainColor1.withValues(alpha: 0.1),
                         ),
                         child: Icon(
                           Icons.fitness_center,
@@ -75,11 +76,21 @@ class WorkoutOverviewScreen extends StatelessWidget {
             ),
 
             SizedBox(height: 24),
-            Text(
-              'Weekly Overview',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MonthlyWorkoutLogScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                'Weekly Overview',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: 8),
@@ -94,13 +105,22 @@ class WorkoutOverviewScreen extends StatelessWidget {
                 },
                 child: WeeklyOverviewCard()
             ),
-
             SizedBox(height: 24),
-            Text(
-              'Last Workouts',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LastWorkoutsScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                'Last Workouts',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: 8),

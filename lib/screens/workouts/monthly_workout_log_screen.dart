@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hor_fit/screens/workouts/workout_log_history_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:hor_fit/providers/workout_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -157,18 +158,30 @@ class _MonthlyWorkoutLogScreenState extends State<MonthlyWorkoutLogScreen> {
                               final endDate = DateTime.parse(log['end_date']);
                               final duration = endDate.difference(startDate);
 
-                              return Card(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 4,
-                                ),
-                                child: ListTile(
-                                  title: Text(log['workout_name']),
-                                  subtitle: Text(
-                                    '${startDate.day.toString().padLeft(2, '0')}/${startDate.month.toString().padLeft(2, '0')}/${startDate.year} - ${startDate.hour.toString().padLeft(2, '0')}:${startDate.minute.toString().padLeft(2, '0')}',
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          WorkoutLogDetailScreen(
+                                              workoutLog: log),
+                                    ),
+                                  );
+                                },
+                                child: Card(
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 4,
                                   ),
-                                  trailing: Text(
-                                    '${duration.inHours}h ${duration.inMinutes % 60}m',
+                                  child: ListTile(
+                                    title: Text(log['workout_name']),
+                                    subtitle: Text(
+                                      '${startDate.day.toString().padLeft(2, '0')}/${startDate.month.toString().padLeft(2, '0')}/${startDate.year} - ${startDate.hour.toString().padLeft(2, '0')}:${startDate.minute.toString().padLeft(2, '0')}',
+                                    ),
+                                    trailing: Text(
+                                      '${duration.inHours}h ${duration.inMinutes % 60}m',
+                                    ),
                                   ),
                                 ),
                               );

@@ -13,6 +13,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool isKgUnit = true;
+  bool useExercisesFromLastLog = true;
 
   final DatabaseHelper dbHelper = DatabaseHelper();
 
@@ -20,6 +21,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _loadWeightUnit();
+    _loadUseExercisesFromLastLog();
   }
 
   Future<void> _loadWeightUnit() async {
@@ -34,6 +36,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.setBool('weightUnit', value);
     setState(() {
       isKgUnit = value;
+    });
+  }
+
+  Future<void> _loadUseExercisesFromLastLog() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      useExercisesFromLastLog = prefs.getBool('useExercisesFromLastLog') ?? true;
+    });
+  }
+
+  Future<void> _toggleUseExercisesFromLastLog(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('useExercisesFromLastLog', value);
+    setState(() {
+      useExercisesFromLastLog = value;
     });
   }
 
@@ -167,6 +184,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 activeColor: mainColor1,
                               ),
                               Text('kg'),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(height: 1),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // when a new workout is started
+                          // the exercises, weights and reps are copied from the previous workout
+                          // of the same workout_id
+                          Text(
+                            'Use Exercises from Last Workout',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          Row(
+                            children: [
+                              Switch(
+                                value: useExercisesFromLastLog,
+                                onChanged: _toggleUseExercisesFromLastLog,
+                                activeColor: mainColor1,
+                              ),
                             ],
                           ),
                         ],

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:hor_fit/database/database_helper.dart';
 import 'package:hor_fit/models/exercise_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WorkoutProvider with ChangeNotifier {
   final DatabaseHelper _dbHelper = DatabaseHelper();
@@ -56,7 +57,8 @@ class WorkoutProvider with ChangeNotifier {
       }
 
       // Step 2: Insert Exercises and Sets
-      for (var exercise in exercises) {
+      for (var i = 0; i < exercises.length; i++) {
+        var exercise = exercises[i];
         String exerciseId = exercise.exercise.id;
 
         // Insert into the 'workout_exercises' table
@@ -65,6 +67,7 @@ class WorkoutProvider with ChangeNotifier {
           {
             'workout_id': workoutId,
             'exercise_id': exerciseId,
+            'order_index': i,
           },
         );
 
@@ -105,11 +108,13 @@ class WorkoutProvider with ChangeNotifier {
 
     // First, get the unique exercises
     final exercises = await db.rawQuery('''
-    SELECT DISTINCT e.*, muscles.name AS muscleName 
+    SELECT DISTINCT e.*, muscles.name AS muscleName, we.order_index 
     FROM exercises e
+    LEFT JOIN workout_exercises we ON e.id = we.exercise_id
     INNER JOIN exercise_sets es ON e.id = es.exercise_id
     INNER JOIN muscles ON e.muscle_id = muscles.id
     WHERE es.workout_log_id = ?
+    ORDER BY we.order_index
   ''', [workoutLogId]);
 
     // Then, get all sets for these exercises
@@ -146,6 +151,9 @@ class WorkoutProvider with ChangeNotifier {
   Future<int> startWorkout(int workoutId) async {
     final db = await _dbHelper.database;
 
+    final prefs = await SharedPreferences.getInstance();
+    var useExercisesFromLastLog = prefs.getBool('useExercisesFromLastLog') ?? true;
+
     // Check for previous workout logs
     final previousLogQuery = await db.query(
         'workout_logs',
@@ -168,7 +176,7 @@ class WorkoutProvider with ChangeNotifier {
     // Initialize batch
     final batch = db.batch();
 
-    if (previousLogQuery.isNotEmpty) {
+    if (previousLogQuery.isNotEmpty && useExercisesFromLastLog) {
       // Copy sets from the previous workout log
       final previousLogId = previousLogQuery.first['id'] as int;
       final previousSets = await db.query(
@@ -192,6 +200,7 @@ class WorkoutProvider with ChangeNotifier {
       final exercisesQuery = await db.rawQuery('''
       SELECT 
         workout_exercises.exercise_id,
+        workout_exercises.order_index,
         exercise_sets.set_number,
         exercise_sets.weight,
         exercise_sets.reps
@@ -200,7 +209,7 @@ class WorkoutProvider with ChangeNotifier {
         workout_exercises.workout_id = exercise_sets.workout_id 
         AND workout_exercises.exercise_id = exercise_sets.exercise_id
       WHERE workout_exercises.workout_id = ?
-      ORDER BY workout_exercises.exercise_id, exercise_sets.set_number
+      ORDER BY workout_exercises.order_index, exercise_sets.set_number
     ''', [workoutId]);
 
       for (var row in exercisesQuery) {

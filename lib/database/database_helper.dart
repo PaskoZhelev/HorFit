@@ -609,11 +609,13 @@ class DatabaseHelper {
 
     // First, get the unique exercises
     final exercises = await db.rawQuery('''
-    SELECT DISTINCT e.*, muscles.name AS muscleName 
+    SELECT DISTINCT e.*, muscles.name AS muscleName, we.order_index
     FROM exercises e
+    INNER JOIN workout_exercises we ON e.id = we.exercise_id
     INNER JOIN exercise_sets wes ON e.id = wes.exercise_id
     INNER JOIN muscles ON e.muscle_id = muscles.id
     WHERE wes.workout_id = ?
+    ORDER BY we.order_index
   ''', [workoutId]);
 
     // Then, get all sets for these exercises
