@@ -131,11 +131,16 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  'assets/images/exercises/${exercise.mediaId ?? 'default'}.png',
-                  width: 120,
-                  height: 90,
-                  fit: BoxFit.contain,
+                child: Container(
+                  width: 110,
+                  height: 110,
+                  color: Colors.white, // Set white background
+                  child: Image.asset(
+                    'assets/images/exercises/${exercise.mediaId ?? 'default'}.png',
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),

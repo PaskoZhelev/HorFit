@@ -276,11 +276,16 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  'assets/images/exercises/${exercise.exercise.mediaId ?? 'default'}.png',
-                  width: 120,
-                  height: 90,
-                  fit: BoxFit.contain,
+                child: Container(
+                  width: 110,
+                  height: 110,
+                  color: Colors.white, // Set white background
+                  child: Image.asset(
+                    'assets/images/exercises/${exercise.exercise.mediaId ?? 'default'}.png',
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
@@ -311,7 +316,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                 final repsFocusNode = FocusNode();
 
                 return Dismissible(
-                  key: Key('set_${exerciseIndex}_${setIndex}'),
+                  key: Key('set_${exerciseIndex}_${setIndex}_${exercise.sets.length}'),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
                     setState(() {
@@ -319,6 +324,10 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                       for (var i = 0; i < exercise.sets.length; i++) {
                         exercise.sets[i].setNumber = i + 1;
                       }
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      setState(() {});
                     });
                   },
                   background: Container(

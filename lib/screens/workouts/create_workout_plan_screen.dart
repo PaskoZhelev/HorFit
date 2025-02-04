@@ -171,11 +171,16 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  'assets/images/exercises/${exercise.exercise.mediaId ?? 'default'}.png',
-                  width: 120,
-                  height: 90,
-                  fit: BoxFit.contain,
+                child: Container(
+                  width: 110,
+                  height: 110,
+                  color: Colors.white, // Set white background
+                  child: Image.asset(
+                    'assets/images/exercises/${exercise.exercise.mediaId ?? 'default'}.png',
+                    width: 110,
+                    height: 110,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
@@ -195,7 +200,7 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                   final repsController = TextEditingController(text: set.reps.toString());
 
                   return Dismissible(
-                    key: Key('set_${exerciseIndex}_${setIndex}'), // Updated key to be unique
+                    key: Key('set_${exerciseIndex}_${setIndex}_${exercise.sets.length}'), // Updated key to be unique
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
                       setState(() {
@@ -204,6 +209,10 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                         for (var i = 0; i < exercise.sets.length; i++) {
                           exercise.sets[i].setNumber = i + 1;
                         }
+                      });
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {});
                       });
                     },
                     background: Container(

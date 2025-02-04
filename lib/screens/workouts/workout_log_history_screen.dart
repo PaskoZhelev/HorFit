@@ -100,6 +100,7 @@ class WorkoutLogDetailScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final exercise = exercises[index];
                     final sets = exercise['sets'] as List<Map<String, dynamic>>;
+                    bool allSetsCompleted = sets.every((set) => set['is_finished'] == 1);
 
                     return Card(
                       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -129,18 +130,35 @@ class WorkoutLogDetailScreen extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: ClipRRect(
+                            child:
+                            ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                'assets/images/exercises/${exercise['mediaId'] ?? 'default'}.png',
-                                width: 120,
-                                height: 90,
-                                fit: BoxFit.contain,
+                              child: Container(
+                                width: 110,
+                                height: 110,
+                                color: Colors.white, // Set white background
+                                child: Image.asset(
+                                  'assets/images/exercises/${exercise['mediaId'] ?? 'default'}.png',
+                                  width: 110,
+                                  height: 110,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
                           ),
-                          title: Text(exercise['name']),
-                          subtitle: Text('${sets.where((set) => set['is_finished'] == 1).length}/${sets.length} sets', style: TextStyle(color: Colors.white.withValues(alpha: 0.5))),
+                          title: Text(exercise['name'], style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                          subtitle: Row(
+                            children: [
+                              if (allSetsCompleted) ...[
+                                Icon(Icons.check_circle, color: Colors.green, size: 18,),
+                                SizedBox(width: 3),
+                              ],
+                              Text(
+                                '${sets.where((set) => set['is_finished'] == 1).length}/${sets.length} sets',
+                                style: TextStyle(color: allSetsCompleted ? Colors.green : Colors.white.withValues(alpha: 0.5)),
+                              ),
+                            ],
+                          ),
                           children: [
                             Padding(
                               padding: EdgeInsets.all(16),

@@ -24,6 +24,7 @@ class ExerciseDetailScreen extends StatelessWidget {
               // Exercise Image
               Card(
                 margin: EdgeInsets.all(8),
+                color: Colors.white,
                 child: Padding(
                   padding: EdgeInsets.all(8),
                   child: Center(
