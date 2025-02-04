@@ -11,6 +11,7 @@ class SelectExerciseScreen extends StatefulWidget {
 class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
   String searchQuery = '';
   String? selectedMuscleId;
+  String? selectedEquipment;
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -46,6 +47,7 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                isDense: true,
               ),
               onChanged: (value) => setState(() => searchQuery = value.toLowerCase()),
             ),
@@ -64,7 +66,17 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: ChoiceChip(
                         label: Text('All', style: TextStyle(fontWeight: FontWeight.bold)),
+                        selectedColor: Colors.teal,
                         selected: selectedMuscleId == null,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: selectedMuscleId == null
+                                ? Colors.teal
+                                : Colors.grey.withValues(alpha: 0.4),
+                            width: 0.5,
+                          ),
+                        ),
                         onSelected: (_) {
                           setState(() {
                             selectedMuscleId = null;
@@ -76,6 +88,16 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
                       child: ChoiceChip(
                         label: Text(muscle.name, style: TextStyle(fontWeight: FontWeight.bold)),
+                        selectedColor: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: selectedMuscleId == muscle.id
+                                ? Colors.teal
+                                : Colors.grey.withValues(alpha: 0.4),
+                            width: 0.5,
+                          ),
+                        ),
                         selected: selectedMuscleId == muscle.id,
                         onSelected: (_) {
                           setState(() {
@@ -93,6 +115,44 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
                   ],
                 ),
               ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: [
+                      for (final equipment in ['Barbell', 'Dumbbell', 'Machine'])
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: ChoiceChip(
+                            label: Text(equipment, style: TextStyle(fontSize: 12),
+                            ),
+                            selectedColor: Colors.teal,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(
+                                color: selectedEquipment == equipment.toLowerCase()
+                                    ? Colors.teal
+                                    : Colors.grey.withValues(alpha: 0.4),
+                                width: 0.5,
+                              ),
+                            ),
+                            selected: selectedEquipment == equipment.toLowerCase(),
+                            onSelected: (_) {
+                              setState(() {
+                                if (selectedEquipment == equipment.toLowerCase()) {
+                                  selectedEquipment = null;
+                                } else {
+                                  selectedEquipment = equipment.toLowerCase();
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
               Expanded(
                 child: _buildExercisesList(provider),
               ),
@@ -105,9 +165,23 @@ class _SelectExerciseScreenState extends State<SelectExerciseScreen> {
 
   Widget _buildExercisesList(ExerciseProvider provider) {
     final exercises = provider.exercises.where((exercise) {
-      bool matchesSearch = exercise.name.toLowerCase().contains(searchQuery);
+      //exact match
+      //bool matchesSearch = exercise.name.toLowerCase().contains(searchQuery.toLowerCase());
+
+      //approximate match
+      List<String> searchWords = searchQuery.split(' ').map((word) => word.trim().toLowerCase()).toList();
+
+      bool matchesSearch = searchWords.any((word) =>
+          exercise.name.toLowerCase().contains(word)
+      );
+      if(searchQuery.isEmpty)
+      {
+        matchesSearch = true;
+      }
       bool matchesMuscle = selectedMuscleId == null || exercise.muscleId.toString() == selectedMuscleId;
-      return matchesSearch && matchesMuscle;
+      bool matchesEquipment = selectedEquipment == null ||
+          exercise.name.toLowerCase().contains(selectedEquipment!);
+      return matchesSearch && matchesMuscle && matchesEquipment;
     }).toList();
 
     return ListView.builder(

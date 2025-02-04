@@ -15,6 +15,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   List<ExerciseWithMuscle> filteredExercises = [];
   String searchQuery = '';
   String? selectedMuscleId;
+  String? selectedEquipment;
 
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode(); // Add focus node
@@ -58,8 +59,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
           matchesSearch = true;
         }
         bool matchesMuscle = selectedMuscleId == null || exercise.muscleId.toString() == selectedMuscleId;
-
-        return matchesSearch && matchesMuscle;
+        bool matchesEquipment = selectedEquipment == null ||
+            exercise.name.toLowerCase().contains(selectedEquipment!);
+        return matchesSearch && matchesMuscle && matchesEquipment;
       }).toList();
 
     });
@@ -95,6 +97,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   },
                 ) : null,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                isDense: true,
               ),
               onChanged: (value) {
                 setState(() {
@@ -112,7 +115,17 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: ChoiceChip(
                     label: Text('All', style: TextStyle(fontWeight: FontWeight.bold)),
+                    selectedColor: Colors.teal,
                     selected: selectedMuscleId == null,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: selectedMuscleId == null
+                            ? Colors.teal
+                            : Colors.grey.withValues(alpha: 0.4),
+                        width: 0.5,
+                      ),
+                    ),
                     onSelected: (_) {
                       setState(() {
                         selectedMuscleId = null;
@@ -125,7 +138,17 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: ChoiceChip(
                     label: Text(muscle.name, style: TextStyle(fontWeight: FontWeight.bold),),
+                    selectedColor: Colors.teal,
                     selected: selectedMuscleId == muscle.id,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(
+                        color: selectedMuscleId == muscle.id
+                            ? Colors.teal
+                            : Colors.grey.withValues(alpha: 0.4),
+                        width: 0.5,
+                      ),
+                    ),
                     onSelected: (_) {
                       setState(() {
                         if(selectedMuscleId == muscle.id)
@@ -141,6 +164,46 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                   ),
                 )),
               ],
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                children: [
+                  for (final equipment in ['Barbell', 'Dumbbell', 'Machine'])
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: ChoiceChip(
+                        label: Text(equipment, style: TextStyle(fontSize: 12),
+                        ),
+                        selectedColor: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: selectedEquipment == equipment.toLowerCase()
+                                ? Colors.teal
+                                : Colors.grey.withValues(alpha: 0.4),
+                            width: 0.5,
+                          ),
+                        ),
+                        selected: selectedEquipment == equipment.toLowerCase(),
+                        onSelected: (_) {
+                          setState(() {
+                            if (selectedEquipment == equipment.toLowerCase()) {
+                              selectedEquipment = null;
+                            } else {
+                              selectedEquipment = equipment.toLowerCase();
+                            }
+
+                            filterExercises(context);
+                          });
+                        },
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
           Expanded(
