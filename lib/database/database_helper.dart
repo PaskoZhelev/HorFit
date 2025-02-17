@@ -37,7 +37,14 @@ class DatabaseHelper {
     }
 
     // open the database
-    return await openDatabase(dbPath);
+    return await openDatabase(dbPath, version: DB_VERSION, onUpgrade: _onUpgrade);
+  }
+
+  // UPGRADE DATABASE TABLES
+  void _onUpgrade(Database db, int oldVersion, int newVersion) {
+    // if (oldVersion < 2) {
+    //   db.execute("ALTER TABLE tabEmployee ADD COLUMN newCol TEXT;");
+    // }
   }
 
   Future<void> resetDb(var dbPath) async {

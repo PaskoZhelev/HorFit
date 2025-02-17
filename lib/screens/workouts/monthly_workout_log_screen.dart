@@ -84,7 +84,7 @@ class _MonthlyWorkoutLogScreenState extends State<MonthlyWorkoutLogScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _hasWorkout(day) ? Colors.green.withOpacity(0.3) : Colors.transparent,
+                            color: _hasWorkout(day) ? Colors.green.withValues(alpha: 0.3) : Colors.transparent,
                           ),
                           child: Text(
                             '${day.day}',
@@ -115,8 +115,8 @@ class _MonthlyWorkoutLogScreenState extends State<MonthlyWorkoutLogScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: _hasWorkout(day)
-                                ? Colors.green.withOpacity(0.7)
-                                : mainColor1.withOpacity(0.7),
+                                ? Colors.green.withValues(alpha: 0.7)
+                                : mainColor1.withValues(alpha: 0.7),
                           ),
                           child: Text(
                             '${day.day}',

@@ -194,7 +194,7 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                 ...exercise.sets.asMap().entries.map((entry) {
                   final setIndex = entry.key;
                   final set = entry.value;
-                  final weightController = TextEditingController(text: set.weight.toString());
+                  final weightController = TextEditingController(text: set.weight.toCleanString());
                   final weightFocusNode = FocusNode();
                   final repsFocusNode = FocusNode();
                   final repsController = TextEditingController(text: set.reps.toString());
@@ -225,52 +225,86 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
                         children: [
-                          Text('Set ${setIndex + 1}'),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: TextField(
-                              controller: weightController,
-                              focusNode: weightFocusNode,
-                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                              decoration: InputDecoration(
-                                labelText: 'Weight',
-                                suffixText: _isKgUnit ? 'kg' : 'lb',
-                              ),
-                              keyboardType: TextInputType.number,
-                              onTap: () {
-                                weightFocusNode.requestFocus();
-                                weightController.selection = TextSelection(
-                                  baseOffset: 0,
-                                  extentOffset: weightController.text.length,
-                                );
-                              },
-                              onChanged: (value) {
-                                set.weight = double.tryParse(value) ?? 0;
-                              },
+                          Container(
+                            width: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${setIndex + 1}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                           ),
                           SizedBox(width: 16),
                           Expanded(
-                            child: TextField(
-                              controller: repsController,
-                              focusNode: repsFocusNode,
-                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                              decoration: InputDecoration(
-                                labelText: 'Reps',
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              keyboardType: TextInputType.number,
-                              onTap: () {
-                                repsFocusNode.requestFocus();
-                                repsController.selection = TextSelection(
-                                  baseOffset: 0,
-                                  extentOffset: repsController.text.length,
-                                );
-                              },
-                              onChanged: (value) {
-                                set.reps = int.tryParse(value) ?? 0;
-                              },
+                              child: TextField(
+                                controller: weightController,
+                                focusNode: weightFocusNode,
+                                onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  border: InputBorder.none,
+                                  suffixText: _isKgUnit ? 'kg' : 'lb',
+                                  suffixStyle: TextStyle(color: Colors.grey),
+                                ),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                keyboardType: TextInputType.number,
+                                onTap: () {
+                                  weightFocusNode.requestFocus();
+                                  weightController.selection = TextSelection(
+                                    baseOffset: 0,
+                                    extentOffset: weightController.text.length,
+                                  );
+                                },
+                                onChanged: (value) {
+                                  set.weight = double.tryParse(value) ?? 0;
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: repsController,
+                                focusNode: repsFocusNode,
+                                onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  border: InputBorder.none,
+                                  suffixText: 'reps',
+                                  suffixStyle: TextStyle(color: Colors.grey),
+                                ),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                keyboardType: TextInputType.number,
+                                onTap: () {
+                                  repsFocusNode.requestFocus();
+                                  repsController.selection = TextSelection(
+                                    baseOffset: 0,
+                                    extentOffset: repsController.text.length,
+                                  );
+                                },
+                                onChanged: (value) {
+                                  set.reps = int.tryParse(value) ?? 0;
+                                },
+                              ),
                             ),
                           ),
                         ],

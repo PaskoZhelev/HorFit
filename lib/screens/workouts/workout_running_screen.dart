@@ -3,6 +3,7 @@ import 'package:hor_fit/models/exercise_models.dart';
 import 'package:hor_fit/providers/workout_provider.dart';
 import 'package:hor_fit/screens/exercises/exercise_detail_screen.dart';
 import 'package:hor_fit/screens/workouts/select_exercise_screen.dart';
+import 'package:hor_fit/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -25,7 +26,8 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
   final List<WorkoutPlanExercise> _exercises = [];
   final Map<int, bool> _expandedState = {};
   Timer? _timer;
-  final ValueNotifier<Duration> _durationNotifier = ValueNotifier(Duration.zero);
+  final ValueNotifier<Duration> _durationNotifier =
+      ValueNotifier(Duration.zero);
   bool _isKgUnit = true;
 
   var startDate = DateTime.now();
@@ -60,8 +62,9 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
   }
 
   Future<void> _loadExercises() async {
-    final exerciseSets = await Provider.of<WorkoutProvider>(context, listen: false)
-        .getWorkoutLogExercisesDetailed(widget.workoutLogId);
+    final exerciseSets =
+        await Provider.of<WorkoutProvider>(context, listen: false)
+            .getWorkoutLogExercisesDetailed(widget.workoutLogId);
 
     setState(() => _exercises.addAll(exerciseSets));
   }
@@ -79,7 +82,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Finish'),
+            child: Text('Finish', style: TextStyle(color: Colors.green)),
           ),
         ],
       ),
@@ -109,7 +112,10 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
           title: ValueListenableBuilder<Duration>(
             valueListenable: _durationNotifier,
             builder: (context, duration, child) {
-              return Text(_formatDuration(duration), style: TextStyle(fontWeight: FontWeight.bold)); // Only timer text updates, not the whole widget
+              return Text(_formatDuration(duration),
+                  style: TextStyle(
+                      fontWeight: FontWeight
+                          .bold)); // Only timer text updates, not the whole widget
             },
           ),
           actions: [
@@ -118,97 +124,106 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.teal,
+                  color: Colors.green,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   'FINISH',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
             SizedBox(width: 8),
           ],
         ),
-        body: Column(
-          children: [
-        Expanded(
-        child: ReorderableListView.builder(
-          itemCount: _exercises.length,
-          onReorder: (oldIndex, newIndex) {
-            setState(() {
-              if (newIndex > oldIndex) newIndex -= 1;
-              final item = _exercises.removeAt(oldIndex);
-              _exercises.insert(newIndex, item);
-            });
-          },
-          itemBuilder: (context, index) => _buildExerciseCard(index, key: ValueKey(_exercises[index])),
-        ),
-      ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        for (var exercise in _exercises) {
-                          for (var set in exercise.sets) {
-                            set.isFinished = 1;
-                          }
-                        }
-                      });
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.teal, width: 2), // Green outline
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                    icon: Icon(Icons.check, color: Colors.teal),
-                    label: Text('All', style: TextStyle(color: Colors.teal)),
-                  ),
-                  SizedBox(width: 12), // Space between buttons
-
-                  // "Add Exercise" Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: () async {
-                        final exercise = await Navigator.push<ExerciseWithMuscle>(
-                          context,
-                          MaterialPageRoute(builder: (context) => SelectExerciseScreen()),
-                        );
-
-                        if (exercise != null) {
-                          setState(() {
-                            _exercises.add(
-                              WorkoutPlanExercise(
-                                exercise: exercise,
-                                sets: [WorkoutSet(setNumber: 1, weight: 0, reps: 0, isFinished: 0)],
-                              ),
-                            );
-                          });
-                        }
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add),
-                          SizedBox(width: 8),
-                          Text('Add Exercise', style: TextStyle(fontSize: 16)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        body: Column(children: [
+          Expanded(
+            child: ReorderableListView.builder(
+              itemCount: _exercises.length,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  final item = _exercises.removeAt(oldIndex);
+                  _exercises.insert(newIndex, item);
+                });
+              },
+              itemBuilder: (context, index) =>
+                  _buildExerciseCard(index, key: ValueKey(_exercises[index])),
             ),
-          ]
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      for (var exercise in _exercises) {
+                        for (var set in exercise.sets) {
+                          set.isFinished = 1;
+                        }
+                      }
+                    });
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.green, width: 2),
+                    // Green outline
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  icon: Icon(Icons.check, color: Colors.green),
+                  label: Text('All', style: TextStyle(color: Colors.green)),
+                ),
+                SizedBox(width: 12), // Space between buttons
+
+                // "Add Exercise" Button
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () async {
+                      final exercise = await Navigator.push<ExerciseWithMuscle>(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SelectExerciseScreen()),
+                      );
+
+                      if (exercise != null) {
+                        setState(() {
+                          _exercises.add(
+                            WorkoutPlanExercise(
+                              exercise: exercise,
+                              sets: [
+                                WorkoutSet(
+                                    setNumber: 1,
+                                    weight: 0,
+                                    reps: 0,
+                                    isFinished: 0)
+                              ],
+                            ),
+                          );
+                        });
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add, color: Colors.green,),
+                        SizedBox(width: 8),
+                        Text('Add Exercise', style: TextStyle(fontSize: 16, color: Colors.green)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ]),
       ),
     );
   }
@@ -289,20 +304,30 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                 ),
               ),
             ),
-            title: Text(exercise.exercise.name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            title: Text(exercise.exercise.name,
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             subtitle: Row(
               children: [
                 if (allSetsCompleted) ...[
-                  Icon(Icons.check_circle, color: Colors.green, size: 18,),
+                  Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 18,
+                  ),
                   SizedBox(width: 3),
                 ],
                 Text(
                   '${exercise.sets.where((set) => set.isFinished == 1).length}/${exercise.sets.length} sets',
-                  style: TextStyle(color: allSetsCompleted ? Colors.green : Colors.white.withValues(alpha: 0.5)),
+                  style: TextStyle(
+                      color: allSetsCompleted
+                          ? Colors.green
+                          : Colors.white.withValues(alpha: 0.5)),
                 ),
               ],
             ),
-            trailing: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+            trailing: Icon(isExpanded
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down, color: Colors.green,),
             onExpansionChanged: (expanded) {
               setState(() => _expandedState[exerciseIndex] = expanded);
             },
@@ -310,13 +335,16 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
               ...exercise.sets.asMap().entries.map((entry) {
                 final setIndex = entry.key;
                 final set = entry.value;
-                final weightController = TextEditingController(text: set.weight.toString());
-                final repsController = TextEditingController(text: set.reps.toString());
+                final weightController =
+                    TextEditingController(text: set.weight.toCleanString());
+                final repsController =
+                    TextEditingController(text: set.reps.toString());
                 final weightFocusNode = FocusNode();
                 final repsFocusNode = FocusNode();
 
                 return Dismissible(
-                  key: Key('set_${exerciseIndex}_${setIndex}_${exercise.sets.length}'),
+                  key: Key(
+                      'set_${exerciseIndex}_${setIndex}_${exercise.sets.length}'),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
                     setState(() {
@@ -337,61 +365,105 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                     child: Icon(Icons.delete, color: Colors.white),
                   ),
                   child: Container(
-                    color: set.isFinished == 1 ? Colors.green.withOpacity(0.2) : null,
+                    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: set.isFinished == 1
+                          ? Colors.green.withValues(alpha: 0.5)
+                          : Colors.grey.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
                         children: [
-                          Text('Set ${setIndex + 1}'),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: TextField(
-                              controller: weightController,
-                              focusNode: weightFocusNode,
-                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                              decoration: InputDecoration(
-                                labelText: 'Weight',
-                                suffixText: _isKgUnit ? 'kg' : 'lb',
-                              ),
-                              keyboardType: TextInputType.number,
-                              onTap: () {
-                                weightFocusNode.requestFocus();
-                                weightController.selection = TextSelection(
-                                  baseOffset: 0,
-                                  extentOffset: weightController.text.length,
-                                );
-                              },
-                              onChanged: (value) {
-                                set.weight = double.tryParse(value) ?? 0;
-                              },
+                          Container(
+                            width: 40,
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${setIndex + 1}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                           ),
                           SizedBox(width: 16),
                           Expanded(
-                            child: TextField(
-                              controller: repsController,
-                              focusNode: repsFocusNode,
-                              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                              decoration: InputDecoration(
-                                labelText: 'Reps',
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              keyboardType: TextInputType.number,
-                              onTap: () {
-                                repsFocusNode.requestFocus();
-                                repsController.selection = TextSelection(
-                                  baseOffset: 0,
-                                  extentOffset: repsController.text.length,
-                                );
-                              },
-                              onChanged: (value) {
-                                set.reps = int.tryParse(value) ?? 0;
-                              },
+                              child: TextField(
+                                controller: weightController,
+                                focusNode: weightFocusNode,
+                                onTapOutside: (event) => FocusManager
+                                    .instance.primaryFocus
+                                    ?.unfocus(),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  border: InputBorder.none,
+                                  suffixText: _isKgUnit ? 'kg' : 'lb',
+                                  suffixStyle: TextStyle(color: Colors.grey),
+                                ),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                keyboardType: TextInputType.number,
+                                onTap: () {
+                                  weightFocusNode.requestFocus();
+                                  weightController.selection = TextSelection(
+                                    baseOffset: 0,
+                                    extentOffset: weightController.text.length,
+                                  );
+                                },
+                                onChanged: (value) {
+                                  set.weight = double.tryParse(value) ?? 0;
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: repsController,
+                                focusNode: repsFocusNode,
+                                onTapOutside: (event) =>
+                                    FocusManager.instance.primaryFocus?.unfocus(),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  border: InputBorder.none,
+                                  suffixText: 'reps',
+                                  suffixStyle: TextStyle(color: Colors.grey),
+                                ),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                keyboardType: TextInputType.number,
+                                onTap: () {
+                                  repsFocusNode.requestFocus();
+                                  repsController.selection = TextSelection(
+                                    baseOffset: 0,
+                                    extentOffset: repsController.text.length,
+                                  );
+                                },
+                                onChanged: (value) {
+                                  set.reps = int.tryParse(value) ?? 0;
+                                },
+                              ),
                             ),
                           ),
                           Transform.scale(
-                            scale: 1.3,
+                            scale: 1.1,
                             child: Checkbox(
                               value: set.isFinished == 1,
                               onChanged: (value) {
@@ -413,13 +485,19 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                 );
               }).toList(),
               Padding(
-                padding: EdgeInsets.all(16),
-                child: ElevatedButton.icon(
+                padding: EdgeInsets.all(5),
+                child: OutlinedButton.icon(
                   onPressed: () {
                     setState(() => exercise.addSet());
                   },
-                  icon: Icon(Icons.add),
-                  label: Text('Add Set'),
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.green, width: 1),
+                    // Green outline
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                  ),
+                  icon: Icon(Icons.add, color: Colors.green),
+                  label: Text('Add Set', style: TextStyle(color: Colors.green)),
                 ),
               ),
             ],
@@ -428,4 +506,5 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
       ),
     );
   }
+
 }

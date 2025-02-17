@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 const DB_NAME = 'hor_fit.db';
 
+const DB_VERSION = 1;
+
 const CALS_COLOR = Colors.redAccent;
 const FAT_COLOR = Colors.orange;
 const PROTEIN_COLOR = Colors.green;
@@ -34,3 +36,11 @@ var TEAL_COLOR = Colors.teal;
 var DARK_COLOR = const Color(0xFF282828);
 
 var mainColor1 = TEAL_COLOR;
+
+extension NumberFormatting on num {
+  String toCleanString() {
+    return this % 1 == 0
+        ? toInt().toString()
+        : toString();
+  }
+}

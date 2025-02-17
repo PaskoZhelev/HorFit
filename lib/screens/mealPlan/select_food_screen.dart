@@ -3,6 +3,8 @@ import 'package:hor_fit/models/food_models.dart';
 import 'package:hor_fit/providers/food_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/constants.dart';
+
 class SelectFoodScreen extends StatefulWidget {
   @override
   _SelectFoodScreenState createState() => _SelectFoodScreenState();
@@ -65,11 +67,28 @@ class _SelectFoodScreenState extends State<SelectFoodScreen> {
               final food = filteredFoods[index];
               return ListTile(
                 title: Text(food.name),
-                subtitle: Text(
-                    '${food.calories} kcal • '
-                        'P: ${food.protein}g • '
-                        'C: ${food.carbohydrate}g • '
-                        'F: ${food.fat}g'
+                subtitle: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.grey[600]),
+                    children: [
+                      TextSpan(
+                        text: '${food.calories} kcal • ',
+                        style: TextStyle(color: CALS_COLOR, fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: 'P: ${food.protein} ',
+                        style: TextStyle(color: PROTEIN_COLOR, fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: '• C: ${food.carbohydrate} ',
+                        style: TextStyle(color: CARBS_COLOR, fontWeight: FontWeight.bold),
+                      ),
+                      TextSpan(
+                        text: '• F: ${food.fat} ',
+                        style: TextStyle(color: FAT_COLOR, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
                 onTap: () => Navigator.pop(context, food),
               );

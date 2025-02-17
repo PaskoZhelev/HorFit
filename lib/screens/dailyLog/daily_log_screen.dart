@@ -82,34 +82,34 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
           String? mealType;
 
           await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('New Meal'),
-            content: TextField(
-              decoration: InputDecoration(hintText: 'Meal name'),
-              onChanged: (value) => mealType = value,
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('New Meal'),
+              content: TextField(
+                decoration: InputDecoration(hintText: 'Meal name'),
+                onChanged: (value) => mealType = value,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel', style: TextStyle(color: Colors.white)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (mealType != null && mealType!.isNotEmpty) {
+                      Navigator.pop(context, mealType);
+                    }
+                  },
+                  child: Text('Add', style: TextStyle(color: Colors.green)),
+                ),
+              ],
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('Cancel', style: TextStyle(color: Colors.white)),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (mealType != null && mealType!.isNotEmpty) {
-                    Navigator.pop(context, mealType);
-                  }
-                },
-                child: Text('Add', style: TextStyle(color: Colors.green)),
-              ),
-            ],
-          ),
-        );
+          );
 
           if (mealType != null && mealType!.isNotEmpty) {
-        await Provider.of<DailyLogProvider>(context, listen: false)
-            .addMealType(mealType!, context.read<DailyLogProvider>().currentLog!.id!);
-      }
+            await Provider.of<DailyLogProvider>(context, listen: false)
+                .addMealType(mealType!, context.read<DailyLogProvider>().currentLog!.id!);
+          }
         },
         backgroundColor: mainColor1,
         child: Icon(Icons.add),
@@ -383,25 +383,35 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
     );
   }
 
+  // Modern Macro Item in Meal Card
   Widget _buildMacroItem(String label, double value, Color color, double width) {
-    return SizedBox(
+    return Container(
       width: width,
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             value.toStringAsFixed(0),
             style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
               color: color,
+              letterSpacing: 0.5,
             ),
           ),
+          SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey[600],
+              fontSize: 11,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -411,7 +421,7 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
 
   Widget _buildMacroSummary(Map<String, double> macros) {
     return Padding(
-      padding: EdgeInsets.only(top: 8),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -426,10 +436,22 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
 
   Widget _buildMacroChip(String label, double value, Color color, String unit) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(10),
+        gradient: LinearGradient(
+          colors: [color.withValues(alpha: 0.1), color.withValues(alpha: 0.2)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.1),
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          )
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -438,16 +460,18 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
             value.toStringAsFixed(0),
             style: TextStyle(
               color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              letterSpacing: 0.5,
             ),
           ),
           SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              color: Colors.grey[600],
+              color: Colors.grey[700],
               fontSize: 12,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -469,19 +493,21 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
 
   Widget _buildMacroPill(String label, double value, Color color) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             '$label:',
             style: TextStyle(
               color: color,
               fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(width: 4),
@@ -490,7 +516,7 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
             style: TextStyle(
               color: color,
               fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
