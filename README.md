@@ -2,7 +2,7 @@
 
 HorFit is an open-source Android Workout tracker and Meal tracker built with Flutter.
 
-![UI](images/promo1.jpg)
+![UI](images/promo1.png)
 
 ### Workout tracker
 With Horfit you can create workout plans by adding exercises and tracking weights and repetitions. There is a huge selection of more than 3000 exercises to choose.
