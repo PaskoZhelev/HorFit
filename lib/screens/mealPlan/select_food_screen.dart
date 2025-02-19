@@ -69,8 +69,12 @@ class _SelectFoodScreenState extends State<SelectFoodScreen> {
                 title: Text(food.name),
                 subtitle: RichText(
                   text: TextSpan(
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 11),
                     children: [
+                      TextSpan(
+                        text: '${food.servingSize} ${food.measure} • ',
+                        style: TextStyle(color: Colors.grey.withValues(alpha: 0.8), fontWeight: FontWeight.bold),
+                      ),
                       TextSpan(
                         text: '${food.calories} kcal • ',
                         style: TextStyle(color: CALS_COLOR, fontWeight: FontWeight.bold),

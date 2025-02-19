@@ -786,4 +786,23 @@ class DatabaseHelper {
 
     return muscleOverview;
   }
+
+
+  Future<List<ExerciseHistory>> getExerciseHistory(String exerciseId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+    SELECT 
+      es.weight,
+      es.reps,
+      es.workout_log_id,
+      wl.start_date
+    FROM exercise_sets es
+    JOIN workout_logs wl ON es.workout_log_id = wl.id
+    WHERE es.exercise_id = ? AND wl.is_finished = 1
+    ORDER BY wl.start_date ASC
+  ''', [exerciseId]);
+
+    return maps.map((map) => ExerciseHistory.fromJson(map)).toList();
+  }
+
 }

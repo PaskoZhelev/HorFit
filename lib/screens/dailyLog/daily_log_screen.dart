@@ -279,7 +279,7 @@ class _DailyLogScreenState extends State<DailyLogsScreen> {
               children: [
                 Text(
                   meal.mealType,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   icon: Icon(Icons.delete, color: Colors.white),

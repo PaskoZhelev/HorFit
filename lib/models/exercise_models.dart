@@ -341,3 +341,25 @@ class WorkoutSet {
   });
 }
 
+class ExerciseHistory {
+  final DateTime date;
+  final double weight;
+  final int reps;
+  final int workoutLogId;
+
+  ExerciseHistory({
+    required this.date,
+    required this.weight,
+    required this.reps,
+    required this.workoutLogId,
+  });
+
+  factory ExerciseHistory.fromJson(Map<String, dynamic> json) {
+    return ExerciseHistory(
+      date: DateTime.parse(json['start_date']),
+      weight: json['weight'].toDouble(),
+      reps: json['reps'],
+      workoutLogId: json['workout_log_id'],
+    );
+  }
+}

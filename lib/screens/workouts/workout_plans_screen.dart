@@ -57,7 +57,7 @@ class _WorkoutPlansScreenState extends State<WorkoutPlansScreen> {
               return Card(
                 margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: ListTile(
-                  title: Text(workout.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
+                  title: Text(workout.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
                   subtitle: Text('${provider.workoutExerciseCount[workout.id]} exercises', style: TextStyle(fontSize: 12)),
                   trailing: IconButton(
                     icon: Icon(Icons.delete_outline),

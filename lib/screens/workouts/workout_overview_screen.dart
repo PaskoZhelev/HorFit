@@ -53,7 +53,7 @@ class WorkoutOverviewScreen extends StatelessWidget {
                             Text(
                               'Start New Workout',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -88,7 +88,7 @@ class WorkoutOverviewScreen extends StatelessWidget {
               child: Text(
                 'Weekly Overview',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -118,7 +118,7 @@ class WorkoutOverviewScreen extends StatelessWidget {
               child: Text(
                 'Last Workouts',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -258,7 +258,7 @@ class WorkoutOverviewScreen extends StatelessWidget {
             Text(
               'Muscles Trained This Week',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -101,6 +101,8 @@ class _FoodListScreenState extends State<FoodListScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          buildNutrientRowWithoutTitle(food.measure, food.servingSize, Colors.grey[700]!),
+                          SizedBox(width: 4),
                           buildNutrientRow('Prot.', food.protein, PROTEIN_COLOR),
                           SizedBox(width: 4),
                           buildNutrientRow('Carb.', food.carbohydrate, CARBS_COLOR),
@@ -184,6 +186,30 @@ class _FoodListScreenState extends State<FoodListScreen> {
         ),
         Text(
           value.toStringAsFixed(1),
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w600,
+            fontSize: 10,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildNutrientRowWithoutTitle(String name, double value, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "${value.toStringAsFixed(0)} ",
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w600,
+            fontSize: 10,
+          ),
+        ),
+        Text(
+          name,
           style: TextStyle(
             color: color,
             fontWeight: FontWeight.w600,

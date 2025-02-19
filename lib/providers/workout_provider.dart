@@ -426,4 +426,8 @@ class WorkoutProvider with ChangeNotifier {
       return DateTime(date.year, date.month, date.day);
     }).toSet();
   }
+
+  Future<List<ExerciseHistory>> getExerciseHistory(String exerciseId) async {
+    return await _dbHelper.getExerciseHistory(exerciseId);
+  }
 }
