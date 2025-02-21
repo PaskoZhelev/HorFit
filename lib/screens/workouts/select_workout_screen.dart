@@ -60,7 +60,7 @@ class _SelectWorkoutScreenState extends State<SelectWorkoutScreen> {
 
   void _startWorkout(BuildContext context, Workout workout) async {
     final provider = Provider.of<WorkoutProvider>(context, listen: false);
-    final logId = await provider.startWorkout(workout.id!);
+    final logId = await provider.startWorkoutKeepingOnlyWeights(workout.id!);
 
     Navigator.pushReplacement(
       context,

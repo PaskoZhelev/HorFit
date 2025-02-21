@@ -92,46 +92,49 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Workout' : 'Create Workout Plan'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: _saveWorkout,
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        shape: CircleBorder(),
-        backgroundColor: mainColor1,
-        onPressed: _selectExercise,
-        child: Icon(Icons.add),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: TextField(
-              controller: _nameController,
-              focusNode: _nameFocusNode,
-              onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-              onTap: () {
-                _nameFocusNode.requestFocus();
-              },
-              decoration: InputDecoration(
-                labelText: 'Workout Name',
-                border: OutlineInputBorder(),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_isEditing ? 'Edit Workout' : 'Create Workout Plan'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.save),
+              onPressed: _saveWorkout,
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(),
+          backgroundColor: mainColor1,
+          onPressed: _selectExercise,
+          child: Icon(Icons.add),
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: TextField(
+                controller: _nameController,
+                focusNode: _nameFocusNode,
+                onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                onTap: () {
+                  _nameFocusNode.requestFocus();
+                },
+                decoration: InputDecoration(
+                  labelText: 'Workout Name',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _exercises.length,
-              itemBuilder: (context, index) => _buildExerciseCard(index),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _exercises.length,
+                itemBuilder: (context, index) => _buildExerciseCard(index),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -329,4 +332,28 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
     );
   }
 
+  Future<bool> _onWillPop() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Exit without saving'),
+        content: Text('Do you want to discard the workout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel', style: TextStyle(color: Colors.green)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Discard', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      return true;
+    }
+    return false;
+  }
 }

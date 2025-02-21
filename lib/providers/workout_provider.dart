@@ -148,7 +148,7 @@ class WorkoutProvider with ChangeNotifier {
     return workoutExercises;
   }
 
-  Future<int> startWorkout(int workoutId) async {
+  Future<int> startWorkoutKeepWeightsAndExercises(int workoutId) async {
     final db = await _dbHelper.database;
 
     final prefs = await SharedPreferences.getInstance();
@@ -221,6 +221,119 @@ class WorkoutProvider with ChangeNotifier {
           'reps': row['reps'] ?? 0,
           'is_finished': 0,
         });
+      }
+    }
+
+    await batch.commit();
+    notifyListeners();
+    return logId;
+  }
+
+  Future<int> startWorkoutKeepingOnlyWeights(int workoutId) async {
+    final db = await _dbHelper.database;
+    final prefs = await SharedPreferences.getInstance();
+    var useExercisesFromLastLog = prefs.getBool('useExercisesFromLastLog') ?? true;
+
+    // Get the last workout log for this workout
+    final previousLogQuery = await db.query(
+        'workout_logs',
+        where: 'workout_id = ?',
+        whereArgs: [workoutId],
+        orderBy: 'start_date DESC',
+        limit: 1
+    );
+
+    // Create workout log
+    final workoutLog = {
+      'workout_id': workoutId,
+      'start_date': DateTime.now().toIso8601String(),
+      'end_date': DateTime.now().toIso8601String(),
+      'is_finished': 0,
+    };
+
+    final logId = await db.insert('workout_logs', workoutLog);
+    final batch = db.batch();
+
+    // Get the workout template exercises
+    final templateExercises = await db.query(
+      'workout_exercises',
+      where: 'workout_id = ?',
+      whereArgs: [workoutId],
+      orderBy: 'order_index',
+    );
+
+    // Get the workout template exercises with their sets
+    final templateSets = await db.rawQuery('''
+    SELECT 
+      we.exercise_id,
+      we.order_index,
+      es.set_number,
+      es.weight,
+      es.reps
+    FROM workout_exercises we
+    LEFT JOIN exercise_sets es ON 
+      we.workout_id = es.workout_id 
+      AND we.exercise_id = es.exercise_id
+    WHERE we.workout_id = ?
+    ORDER BY we.order_index, es.set_number
+  ''', [workoutId]);
+
+    // Group template sets by exercise_id
+    Map<String, List<Map<String, dynamic>>> templateExerciseSets = {};
+    for (var set in templateSets) {
+      String exerciseId = set['exercise_id'] as String;
+      templateExerciseSets.putIfAbsent(exerciseId, () => []);
+      templateExerciseSets[exerciseId]!.add(set);
+    }
+
+    // Create a map to store the last weights for each exercise
+    Map<String, List<Map<String, dynamic>>> lastExerciseSets = {};
+
+    if (previousLogQuery.isNotEmpty && useExercisesFromLastLog) {
+      final previousLogId = previousLogQuery.first['id'] as int;
+      final previousSets = await db.query(
+        'exercise_sets',
+        where: 'workout_log_id = ?',
+        whereArgs: [previousLogId],
+      );
+
+      // Group sets by exercise_id
+      for (var set in previousSets) {
+        String exerciseId = set['exercise_id'] as String;
+        lastExerciseSets.putIfAbsent(exerciseId, () => []);
+        lastExerciseSets[exerciseId]!.add(set);
+      }
+    }
+
+    // Process each exercise from the template
+    for (String exerciseId in templateExerciseSets.keys) {
+      List<Map<String, dynamic>> previousSets = lastExerciseSets[exerciseId] ?? [];
+      List<Map<String, dynamic>> templateSetsForExercise = templateExerciseSets[exerciseId] ?? [];
+
+      if (previousSets.isNotEmpty && useExercisesFromLastLog) {
+        // Use sets from the previous workout with their weights and reps
+        for (var set in previousSets) {
+          batch.insert('exercise_sets', {
+            'workout_log_id': logId,
+            'exercise_id': exerciseId,
+            'set_number': set['set_number'],
+            'weight': set['weight'],
+            'reps': set['reps'],
+            'is_finished': 0,
+          });
+        }
+      } else {
+        // Use sets from the template
+        for (var set in templateSetsForExercise) {
+          batch.insert('exercise_sets', {
+            'workout_log_id': logId,
+            'exercise_id': exerciseId,
+            'set_number': set['set_number'] ?? 1,
+            'weight': set['weight'] ?? 0.0,
+            'reps': set['reps'] ?? 0,
+            'is_finished': 0,
+          });
+        }
       }
     }
 
