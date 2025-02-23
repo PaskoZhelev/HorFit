@@ -229,7 +229,7 @@ class WorkoutProvider with ChangeNotifier {
     return logId;
   }
 
-  Future<int> startWorkoutKeepingOnlyWeights(int workoutId) async {
+  Future<int> startWorkoutKeepingOnlyWeights(int workoutId, DateTime? customStartDate) async {
     final db = await _dbHelper.database;
     final prefs = await SharedPreferences.getInstance();
     var useExercisesFromLastLog = prefs.getBool('useExercisesFromLastLog') ?? true;
@@ -243,13 +243,25 @@ class WorkoutProvider with ChangeNotifier {
         limit: 1
     );
 
-    // Create workout log
-    final workoutLog = {
-      'workout_id': workoutId,
-      'start_date': DateTime.now().toIso8601String(),
-      'end_date': DateTime.now().toIso8601String(),
-      'is_finished': 0,
-    };
+    var workoutLog;
+    if(customStartDate != null) {
+      // Create workout log
+      workoutLog = {
+        'workout_id': workoutId,
+        'start_date': customStartDate.toIso8601String(),
+        'end_date': customStartDate.add(Duration(minutes: 60)).toIso8601String(),
+        'is_finished': 0,
+      };
+    } else{
+      // Create workout log
+      workoutLog = {
+        'workout_id': workoutId,
+        'start_date': DateTime.now().toIso8601String(),
+        'end_date': DateTime.now().toIso8601String(),
+        'is_finished': 0,
+      };
+    }
+
 
     final logId = await db.insert('workout_logs', workoutLog);
     final batch = db.batch();
@@ -393,7 +405,7 @@ class WorkoutProvider with ChangeNotifier {
   }
 
   // Mark workout as finished
-  Future<void> finishWorkout(int workoutLogId, List<WorkoutPlanExercise> exercises) async {
+  Future<void> finishWorkout(int workoutLogId, List<WorkoutPlanExercise> exercises, DateTime? customDate) async {
     final db = await _dbHelper.database;
 
     await db.transaction((txn) async {
@@ -421,12 +433,13 @@ class WorkoutProvider with ChangeNotifier {
         }
       }
 
+      var endDate = customDate != null ? customDate : DateTime.now();
       // Update workout log status
       await txn.update(
         'workout_logs',
         {
           'is_finished': 1,
-          'end_date': DateTime.now().toIso8601String(),
+          'end_date': endDate.toIso8601String(),
         },
         where: 'id = ?',
         whereArgs: [workoutLogId],
@@ -474,39 +487,37 @@ class WorkoutProvider with ChangeNotifier {
   Future<List<Map<String, dynamic>>> getWorkoutLogDetails(int workoutLogId) async {
     final db = await _dbHelper.database;
 
-    // Get all exercises and their sets for this workout log
+    // First, get all exercises for this workout log
     final exercises = await db.rawQuery('''
-      SELECT DISTINCT
-        e.*,
-        (
-          SELECT json_group_array(
-            json_object(
-              'set_number', es.set_number,
-              'weight', es.weight,
-              'reps', es.reps,
-              'is_finished', es.is_finished
-            )
-          )
-          FROM exercise_sets es
-          WHERE es.workout_log_id = ? AND es.exercise_id = e.id
-          ORDER BY es.set_number
-        ) as sets
-      FROM exercise_sets es
-      JOIN exercises e ON es.exercise_id = e.id
-      WHERE es.workout_log_id = ?
-      GROUP BY e.id
-      ORDER BY e.name
-    ''', [workoutLogId, workoutLogId]);
+    SELECT DISTINCT e.*
+    FROM exercise_sets es
+    JOIN exercises e ON es.exercise_id = e.id
+    WHERE es.workout_log_id = ?
+    ORDER BY e.name
+  ''', [workoutLogId]);
 
-    // Parse the JSON string of sets into a List
-    return exercises.map((exercise) {
-      var setsJson = exercise['sets'] as String;
-      List<dynamic> setsList = json.decode(setsJson);
-      return {
+    // For each exercise, get its sets
+    List<Map<String, dynamic>> result = [];
+
+    for (var exercise in exercises) {
+      final sets = await db.rawQuery('''
+      SELECT 
+        set_number,
+        weight,
+        reps,
+        is_finished
+      FROM exercise_sets
+      WHERE workout_log_id = ? AND exercise_id = ?
+      ORDER BY set_number
+    ''', [workoutLogId, exercise['id']]);
+
+      result.add({
         ...exercise,
-        'sets': setsList.map((set) => Map<String, dynamic>.from(set)).toList(),
-      };
-    }).toList();
+        'sets': sets,
+      });
+    }
+
+    return result;
   }
 
   Future<void> deleteWorkoutLog(int workoutLogId) async {

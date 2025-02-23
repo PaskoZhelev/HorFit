@@ -9,25 +9,27 @@ import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class WorkoutRunningScreen extends StatefulWidget {
+class LogCompletedWorkoutScreen extends StatefulWidget {
   final Workout workout;
   final int workoutLogId;
+  final DateTime workoutDate;
 
-  WorkoutRunningScreen({
+  LogCompletedWorkoutScreen({
     required this.workout,
     required this.workoutLogId,
+    required this.workoutDate,
   });
 
   @override
-  _WorkoutRunningScreenState createState() => _WorkoutRunningScreenState();
+  _LogCompletedWorkoutScreenState createState() => _LogCompletedWorkoutScreenState();
 }
 
-class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
+class _LogCompletedWorkoutScreenState extends State<LogCompletedWorkoutScreen> {
   final List<WorkoutPlanExercise> _exercises = [];
   final Map<int, bool> _expandedState = {};
   Timer? _timer;
   final ValueNotifier<Duration> _durationNotifier =
-      ValueNotifier(Duration.zero);
+  ValueNotifier(Duration.zero);
   bool _isKgUnit = true;
 
   var startDate = DateTime.now();
@@ -36,8 +38,6 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
   void initState() {
     super.initState();
     _loadExercises();
-    _startTimer();
-
     _loadWeightUnit();
   }
 
@@ -63,8 +63,8 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
 
   Future<void> _loadExercises() async {
     final exerciseSets =
-        await Provider.of<WorkoutProvider>(context, listen: false)
-            .getWorkoutLogExercisesDetailed(widget.workoutLogId);
+    await Provider.of<WorkoutProvider>(context, listen: false)
+        .getWorkoutLogExercisesDetailed(widget.workoutLogId);
 
     setState(() => _exercises.addAll(exerciseSets));
   }
@@ -90,7 +90,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
 
     if (confirm == true) {
       await Provider.of<WorkoutProvider>(context, listen: false)
-          .finishWorkout(widget.workoutLogId, _exercises, null);
+          .finishWorkout(widget.workoutLogId, _exercises, widget.workoutDate);
       Navigator.pop(context);
     }
   }
@@ -109,15 +109,6 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: ValueListenableBuilder<Duration>(
-            valueListenable: _durationNotifier,
-            builder: (context, duration, child) {
-              return Text(_formatDuration(duration),
-                  style: TextStyle(
-                      fontWeight: FontWeight
-                          .bold)); // Only timer text updates, not the whole widget
-            },
-          ),
           actions: [
             TextButton(
               onPressed: _finishWorkout,
@@ -249,7 +240,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
 
     if (confirm == true) {
       await Provider.of<WorkoutProvider>(context, listen: false)
-          .finishWorkout(widget.workoutLogId, _exercises, null);
+          .finishWorkout(widget.workoutLogId, _exercises, widget.workoutDate);
       return true;
     }
     return false;
@@ -336,9 +327,9 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                 final setIndex = entry.key;
                 final set = entry.value;
                 final weightController =
-                    TextEditingController(text: set.weight.toCleanString());
+                TextEditingController(text: set.weight.toCleanString());
                 final repsController =
-                    TextEditingController(text: set.reps.toString());
+                TextEditingController(text: set.reps.toString());
                 final weightFocusNode = FocusNode();
                 final repsFocusNode = FocusNode();
 
@@ -374,7 +365,7 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                     ),
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       child: Row(
                         children: [
                           Container(

@@ -6,7 +6,18 @@ import 'package:hor_fit/screens/workouts/workout_running_screen.dart';
 import 'package:hor_fit/utils/constants.dart';
 import 'package:provider/provider.dart';
 
+import 'log_completed_workout_screen.dart';
+
 class SelectWorkoutScreen extends StatefulWidget {
+
+  bool isNewWorkout = true;
+  final DateTime? customStartDate;
+
+  SelectWorkoutScreen({
+    required this.isNewWorkout,
+    this.customStartDate,
+  });
+
   @override
   State<SelectWorkoutScreen> createState() => _SelectWorkoutScreenState();
 }
@@ -48,7 +59,16 @@ class _SelectWorkoutScreenState extends State<SelectWorkoutScreen> {
                 child: ListTile(
                   title: Text(workout.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),),
                   subtitle: Text('${provider.workoutExerciseCount[workout.id]} exercises', style: TextStyle(fontSize: 12)),
-                  onTap: () => _startWorkout(context, workout),
+                  onTap: () {
+
+                    if(widget.isNewWorkout)
+                      {
+                        _startWorkout(context, workout);
+                      } else {
+                      _startCompletedWorkout(context, workout);
+                    }
+
+                  }
                 ),
               );
             },
@@ -60,7 +80,7 @@ class _SelectWorkoutScreenState extends State<SelectWorkoutScreen> {
 
   void _startWorkout(BuildContext context, Workout workout) async {
     final provider = Provider.of<WorkoutProvider>(context, listen: false);
-    final logId = await provider.startWorkoutKeepingOnlyWeights(workout.id!);
+    final logId = await provider.startWorkoutKeepingOnlyWeights(workout.id!, null);
 
     Navigator.pushReplacement(
       context,
@@ -68,6 +88,22 @@ class _SelectWorkoutScreenState extends State<SelectWorkoutScreen> {
         builder: (context) => WorkoutRunningScreen(
           workout: workout,
           workoutLogId: logId,
+        ),
+      ),
+    );
+  }
+
+  void _startCompletedWorkout(BuildContext context, Workout workout) async {
+    final provider = Provider.of<WorkoutProvider>(context, listen: false);
+    final logId = await provider.startWorkoutKeepingOnlyWeights(workout.id!, widget.customStartDate);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LogCompletedWorkoutScreen(
+          workout: workout,
+          workoutLogId: logId,
+          workoutDate: widget.customStartDate!,
         ),
       ),
     );

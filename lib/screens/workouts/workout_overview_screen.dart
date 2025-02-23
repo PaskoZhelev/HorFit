@@ -9,6 +9,8 @@ import 'package:hor_fit/screens/workouts/reports/workout_log_history_screen.dart
 import 'package:hor_fit/utils/constants.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/date_picker_dialog.dart';
+
 class WorkoutOverviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class WorkoutOverviewScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SelectWorkoutScreen(),
+                      builder: (context) => SelectWorkoutScreen(isNewWorkout: true),
                     ),
                   );
                 },
@@ -75,7 +77,76 @@ class WorkoutOverviewScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 24),
+            SizedBox(height: 5),
+
+            Card(
+              child: InkWell(
+                onTap: () async {
+                  final selectedDate = await showDialog<DateTime>(
+                    context: context,
+                    builder: (context) => DateSelectionDialog(),
+                  );
+
+                  if (selectedDate != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectWorkoutScreen(
+                          isNewWorkout: false,
+                          customStartDate: selectedDate,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.orange.withValues(alpha: 0.1),
+                        ),
+                        child: Icon(
+                          Icons.history,
+                          color: Colors.orange,
+                          size: 30,
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Log Completed Workout',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Add a workout from a previous date',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 15),
             InkWell(
               onTap: () {
                 Navigator.push(

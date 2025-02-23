@@ -37,111 +37,110 @@ class _LastWorkoutsScreenState extends State<LastWorkoutsScreen> {
               }
 
               return Column(
-                children: logs
-                    .map((log) => Card(
-                  margin: EdgeInsets.symmetric(vertical: 4),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              WorkoutLogDetailScreen(
-                                  workoutLog: log),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  log['workout_name'],
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete,
-                                    color: Colors.white),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder:
-                                        (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(
-                                            'Delete Workout Log'),
-                                        content: Text(
-                                            'Are you sure you want to delete this workout log?'),
-                                        actions: [
-                                          TextButton(
-                                            child: Text('Cancel', style: TextStyle(color: Colors.white),),
-                                            onPressed: () {
-                                              Navigator.of(
-                                                  context)
-                                                  .pop();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text(
-                                              'Delete',
-                                              style: TextStyle(
-                                                  color:
-                                                  Colors.red),
-                                            ),
-                                            onPressed: () async {
-                                              await provider
-                                                  .deleteWorkoutLog(
-                                                  log['id']);
-                                              Navigator.of(
-                                                  context)
-                                                  .pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                _formatDateTime(
-                                    log['start_date']),
-                                style: TextStyle(
-                                    color: Colors.grey[600]),
-                              ),
-                              Text(
-                                _formatDuration(log['start_date'],
-                                    log['end_date']),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Display Workout Count
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Total Workouts: ${logs.length}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ))
-                    .toList(),
+
+                  // Workout List
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: logs.length,
+                      itemBuilder: (context, index) {
+                        final log = logs[index];
+
+                        return Card(
+                          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      WorkoutLogDetailScreen(workoutLog: log),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          log['workout_name'],
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.delete, color: Colors.white),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Delete Workout Log'),
+                                                content: Text('Are you sure you want to delete this workout log?'),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text('Cancel'),
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text('Delete', style: TextStyle(color: Colors.white)),
+                                                    onPressed: () async {
+                                                      await provider.deleteWorkoutLog(log['id']);
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        _formatDateTime(log['start_date']),
+                                        style: TextStyle(color: Colors.grey[600]),
+                                      ),
+                                      Text(
+                                        _formatDuration(log['start_date'], log['end_date']),
+                                        style: TextStyle(fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               );
             },
           );

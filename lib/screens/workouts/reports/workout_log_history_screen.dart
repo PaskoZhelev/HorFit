@@ -4,11 +4,18 @@ import 'package:hor_fit/providers/workout_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hor_fit/screens/exercises/exercise_detail_screen.dart';
 
-class WorkoutLogDetailScreen extends StatelessWidget {
+import '../edit_workout_log_screen.dart';
+
+class WorkoutLogDetailScreen extends StatefulWidget {
   final Map<String, dynamic> workoutLog;
 
   WorkoutLogDetailScreen({required this.workoutLog});
 
+  @override
+  State<WorkoutLogDetailScreen> createState() => _WorkoutLogDetailScreenState();
+}
+
+class _WorkoutLogDetailScreenState extends State<WorkoutLogDetailScreen> {
   String _formatDateTime(String dateTime) {
     final date = DateTime.parse(dateTime);
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
@@ -27,12 +34,35 @@ class WorkoutLogDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // In WorkoutLogDetailScreen
       appBar: AppBar(
-        title: Text(workoutLog['workout_name']),
+        title: Text(widget.workoutLog['workout_name']),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () async {
+              final result = await Navigator.push<bool>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditWorkoutLogScreen(
+                    workoutLog: widget.workoutLog,
+                  ),
+                ),
+              );
+
+              // If changes were saved, refresh the workout log details
+              if (result == true) {
+                setState(() {
+                  // This will rebuild the screen with updated data
+                });
+              }
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: Provider.of<WorkoutProvider>(context, listen: false)
-            .getWorkoutLogDetails(workoutLog['id']),
+            .getWorkoutLogDetails(widget.workoutLog['id']),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
@@ -59,7 +89,7 @@ class WorkoutLogDetailScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            _formatDateTime(workoutLog['start_date']),
+                            _formatDateTime(widget.workoutLog['start_date']),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -80,8 +110,8 @@ class WorkoutLogDetailScreen extends StatelessWidget {
                           ),
                           Text(
                             _formatDuration(
-                              workoutLog['start_date'],
-                              workoutLog['end_date'],
+                              widget.workoutLog['start_date'],
+                              widget.workoutLog['end_date'],
                             ),
                             style: TextStyle(
                               fontSize: 16,
