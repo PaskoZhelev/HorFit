@@ -323,16 +323,50 @@ class WorkoutProvider with ChangeNotifier {
           });
         }
       } else {
-        // Use sets from the template
-        for (var set in templateSetsForExercise) {
-          batch.insert('exercise_sets', {
-            'workout_log_id': logId,
-            'exercise_id': exerciseId,
-            'set_number': set['set_number'] ?? 1,
-            'weight': set['weight'] ?? 0.0,
-            'reps': set['reps'] ?? 0,
-            'is_finished': 0,
-          });
+        // First try to find the most recent sets for this exercise from any previous workout log
+        final mostRecentSetsQuery = await db.rawQuery('''
+        SELECT es.*
+        FROM exercise_sets es
+        JOIN workout_logs wl ON es.workout_log_id = wl.id
+        WHERE wl.workout_id = ? 
+        AND es.exercise_id = ?
+        AND wl.id < ?
+        ORDER BY wl.start_date DESC
+        LIMIT 1
+    ''', [workoutId, exerciseId, logId]);
+
+        if (mostRecentSetsQuery.isNotEmpty) {
+          // Found previous sets for this exercise, use those
+          final previousWorkoutLogId = mostRecentSetsQuery.first['workout_log_id'];
+          final previousSets = await db.query(
+              'exercise_sets',
+              where: 'workout_log_id = ? AND exercise_id = ?',
+              whereArgs: [previousWorkoutLogId, exerciseId],
+              orderBy: 'set_number'
+          );
+
+          for (var set in previousSets) {
+            batch.insert('exercise_sets', {
+              'workout_log_id': logId,
+              'exercise_id': exerciseId,
+              'set_number': set['set_number'],
+              'weight': set['weight'],
+              'reps': set['reps'],
+              'is_finished': 0,
+            });
+          }
+        } else {
+          // No previous sets found, use template sets
+          for (var set in templateSetsForExercise) {
+            batch.insert('exercise_sets', {
+              'workout_log_id': logId,
+              'exercise_id': exerciseId,
+              'set_number': set['set_number'] ?? 1,
+              'weight': set['weight'] ?? 0.0,
+              'reps': set['reps'] ?? 0,
+              'is_finished': 0,
+            });
+          }
         }
       }
     }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hor_fit/providers/workout_provider.dart';
-import 'package:hor_fit/screens/workouts/workout_log_history_screen.dart';
+import 'package:hor_fit/screens/workouts/reports/workout_log_history_screen.dart';
 import 'package:provider/provider.dart';
 
 class LastWorkoutsScreen extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hor_fit/models/exercise_models.dart';
 import 'package:hor_fit/providers/workout_provider.dart';
-import 'package:hor_fit/screens/workouts/create_workout_plan_screen.dart';
+import 'package:hor_fit/screens/workouts/plans/create_workout_plan_screen.dart';
 import 'package:hor_fit/screens/workouts/workout_running_screen.dart';
 import 'package:hor_fit/utils/constants.dart';
 import 'package:provider/provider.dart';

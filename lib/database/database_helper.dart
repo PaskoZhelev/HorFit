@@ -581,6 +581,13 @@ class DatabaseHelper {
   Future<void> deleteWorkout(int id) async {
     final db = await database;
     await db.transaction((txn) async {
+
+      await txn.delete(
+        'workout_exercises',
+        where: 'workout_id = ?',
+        whereArgs: [id],
+      );
+
       // Delete all exercise sets for this workout
       await txn.delete(
         'exercise_sets',
@@ -616,7 +623,7 @@ class DatabaseHelper {
 
     // First, get the unique exercises
     final exercises = await db.rawQuery('''
-    SELECT DISTINCT e.*, muscles.name AS muscleName, we.order_index
+    SELECT DISTINCT e.*, muscles.name AS muscleName
     FROM exercises e
     INNER JOIN workout_exercises we ON e.id = we.exercise_id
     INNER JOIN exercise_sets wes ON e.id = wes.exercise_id

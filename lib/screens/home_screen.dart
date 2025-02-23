@@ -5,7 +5,7 @@ import 'package:hor_fit/screens/food/food_list_screen.dart';
 import 'package:hor_fit/screens/mealPlan/food_plan_list_screen.dart';
 import 'package:hor_fit/screens/settings/settings_screen.dart';
 import 'package:hor_fit/screens/workouts/workout_main_screen.dart';
-import 'package:hor_fit/screens/workouts/workout_plans_screen.dart';
+import 'package:hor_fit/screens/workouts/plans/workout_plans_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {

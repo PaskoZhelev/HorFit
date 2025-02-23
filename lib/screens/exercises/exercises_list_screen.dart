@@ -213,9 +213,7 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
                 final exercise = filteredExercises[index];
                 return Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  margin: EdgeInsets.all(8),
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(8),
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Container(

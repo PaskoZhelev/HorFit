@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hor_fit/providers/workout_provider.dart';
-import 'package:hor_fit/screens/workouts/last_workouts_screen.dart';
-import 'package:hor_fit/screens/workouts/monthly_workout_log_screen.dart';
+import 'package:hor_fit/screens/workouts/reports/last_workouts_screen.dart';
+import 'package:hor_fit/screens/workouts/reports/monthly_workout_log_screen.dart';
 import 'package:hor_fit/screens/workouts/select_workout_screen.dart';
-import 'package:hor_fit/screens/workouts/weekly_muscle_overview_card.dart';
-import 'package:hor_fit/screens/workouts/weekly_overview_card.dart';
-import 'package:hor_fit/screens/workouts/workout_log_history_screen.dart';
+import 'package:hor_fit/screens/workouts/reports/weekly_muscle_overview_card.dart';
+import 'package:hor_fit/screens/workouts/reports/weekly_overview_card.dart';
+import 'package:hor_fit/screens/workouts/reports/workout_log_history_screen.dart';
 import 'package:hor_fit/utils/constants.dart';
 import 'package:provider/provider.dart';
 
