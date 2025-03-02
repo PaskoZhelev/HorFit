@@ -108,7 +108,7 @@ class WorkoutProvider with ChangeNotifier {
 
     // First, get the unique exercises
     final exercises = await db.rawQuery('''
-    SELECT DISTINCT e.*, muscles.name AS muscleName, we.order_index 
+    SELECT DISTINCT e.*, muscles.name AS muscleName
     FROM exercises e
     LEFT JOIN workout_exercises we ON e.id = we.exercise_id
     INNER JOIN exercise_sets es ON e.id = es.exercise_id
