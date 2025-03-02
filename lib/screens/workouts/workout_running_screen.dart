@@ -194,20 +194,45 @@ class _WorkoutRunningScreenState extends State<WorkoutRunningScreen> {
                       );
 
                       if (exercise != null) {
-                        setState(() {
-                          _exercises.add(
-                            WorkoutPlanExercise(
-                              exercise: exercise,
-                              sets: [
-                                WorkoutSet(
-                                    setNumber: 1,
-                                    weight: 0,
-                                    reps: 0,
-                                    isFinished: 0)
-                              ],
-                            ),
-                          );
-                        });
+                        var exerciseSets = await Provider.of<WorkoutProvider>(context, listen: false)
+                            .getLastSetsForExercise(exercise.id);
+
+                        if (exerciseSets.isEmpty) {
+                          setState(() {
+                            _exercises.add(
+                              WorkoutPlanExercise(
+                                exercise: exercise,
+                                sets: [
+                                  WorkoutSet(
+                                      setNumber: 1,
+                                      weight: 0,
+                                      reps: 0,
+                                      isFinished: 0)
+                                ],
+                              ),
+                            );
+                          });
+                        } else {
+                          setState(() {
+                            List<WorkoutSet> sets = [];
+                            for (var set in exerciseSets) {
+                              sets.add(
+                                  WorkoutSet(
+                                  setNumber: set['set_number'] ?? 1,
+                                  weight: set['weight'] ?? 0.0,
+                                  reps: set['reps'] ?? 0,
+                                  isFinished: 0)
+                              );
+                            }
+
+                            _exercises.add(
+                              WorkoutPlanExercise(
+                                exercise: exercise,
+                                sets: sets,
+                              ),
+                            );
+                          });
+                        }
                       }
                     },
                     child: Row(

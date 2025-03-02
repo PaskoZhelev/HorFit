@@ -314,7 +314,7 @@ class WorkoutPlanExercise {
       setNumber: newSetNumber,
       weight: lastSet?.weight ?? 0,
       reps: lastSet?.reps ?? 0,
-      isFinished: lastSet?.isFinished ?? 0,
+      isFinished: 0,
     ));
   }
 

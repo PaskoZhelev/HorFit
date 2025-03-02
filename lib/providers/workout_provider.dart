@@ -588,4 +588,21 @@ class WorkoutProvider with ChangeNotifier {
   Future<List<ExerciseHistory>> getExerciseHistory(String exerciseId) async {
     return await _dbHelper.getExerciseHistory(exerciseId);
   }
+
+  Future<List<Map<String, dynamic>>> getLastSetsForExercise(String exerciseId) async {
+    final db = await _dbHelper.database;
+
+    return await db.rawQuery('''
+    SELECT * 
+    FROM exercise_sets 
+    WHERE exercise_id = ? 
+    AND workout_log_id = (
+        SELECT MAX(workout_log_id) 
+        FROM exercise_sets 
+        WHERE exercise_id = ?
+        AND workout_log_id IS NOT NULL
+    )
+    ORDER BY set_number ASC;
+  ''', [exerciseId, exerciseId]);
+  }
 }

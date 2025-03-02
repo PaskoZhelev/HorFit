@@ -1,0 +1,171 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity body_parts {
+    *id : TEXT
+    --
+    name : TEXT
+}
+
+entity daily_logs {
+    *id : INTEGER
+    --
+    date : TEXT
+}
+
+entity daily_meals {
+    *id : INTEGER
+    --
+    log_id : INTEGER
+    meal_type : TEXT
+}
+
+entity daily_meal_foods {
+    *id : INTEGER
+    --
+    meal_id : INTEGER
+    food_id : INTEGER
+    servingSize : REAL
+}
+
+entity equipment {
+    *id : TEXT
+    --
+    name : TEXT
+}
+
+entity exercise_types {
+    *id : TEXT
+    --
+    name : TEXT
+}
+
+entity exercises {
+    *id : TEXT
+    --
+    name : TEXT
+    type_id : TEXT
+    muscle_id : TEXT
+    equipment_id : TEXT
+    bodyPart_id : TEXT
+    mediaId : TEXT
+    own_type : TEXT
+    priority : INTEGER
+}
+
+entity exercise_sets {
+    *id : INTEGER
+    --
+    workout_log_id : INTEGER
+    workout_id : INTEGER
+    exercise_id : TEXT
+    set_number : INTEGER
+    weight : REAL
+    reps : INTEGER
+    is_finished : INTEGER
+}
+
+entity food_plans {
+    *id : INTEGER
+    --
+    name : TEXT
+}
+
+entity foods {
+    *id : INTEGER
+    --
+    name : TEXT
+    calories : REAL
+    servingSize : REAL
+    measure : TEXT
+    fat : REAL
+    protein : REAL
+    carbohydrate : REAL
+    type : TEXT
+}
+
+entity general {
+    *id : INTEGER
+    --
+    db_version : INTEGER
+}
+
+entity muscles {
+    *id : TEXT
+    --
+    name : TEXT
+}
+
+entity plan_meals {
+    *id : INTEGER
+    --
+    plan_id : INTEGER
+    meal_type : TEXT
+}
+
+entity plan_meal_food {
+    *id : INTEGER
+    --
+    meal_id : INTEGER
+    food_id : INTEGER
+    servingSize : REAL
+}
+
+entity recipes {
+    *id : INTEGER
+    --
+    name : TEXT
+}
+
+entity recipe_foods {
+    *id : INTEGER
+    --
+    recipe_id : INTEGER
+    food_id : INTEGER
+}
+
+entity workout_exercises {
+    *id : INTEGER
+    --
+    workout_id : INTEGER
+    exercise_id : TEXT
+    order_index : INTEGER
+}
+
+entity workout_logs {
+    *id : INTEGER
+    --
+    workout_id : INTEGER
+    start_date : TEXT
+    end_date : TEXT
+    is_finished : INTEGER
+}
+
+entity workouts {
+    *id : INTEGER
+    --
+    name : TEXT
+}
+
+' Relationships
+daily_meals --|> daily_logs : log_id
+daily_meal_foods --|> daily_meals : meal_id
+daily_meal_foods --|> foods : food_id
+exercises --|> exercise_types : type_id
+exercises --|> muscles : muscle_id
+exercises --|> equipment : equipment_id
+exercises --|> body_parts : bodyPart_id
+exercise_sets --|> workout_logs : workout_log_id
+exercise_sets --|> workouts : workout_id
+exercise_sets --|> exercises : exercise_id
+plan_meals --|> food_plans : plan_id
+plan_meal_food --|> plan_meals : meal_id
+plan_meal_food --|> foods : food_id
+recipe_foods --|> recipes : recipe_id
+recipe_foods --|> foods : food_id
+workout_exercises --|> workouts : workout_id
+workout_exercises --|> exercises : exercise_id
+workout_logs --|> workouts : workout_id
+
+@enduml

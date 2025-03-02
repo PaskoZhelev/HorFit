@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hor_fit/screens/dailyLog/daily_log_screen.dart';
-import 'package:hor_fit/screens/exercises/exercises_list_screen.dart';
-import 'package:hor_fit/screens/food/food_list_screen.dart';
-import 'package:hor_fit/screens/mealPlan/food_plan_list_screen.dart';
 import 'package:hor_fit/screens/settings/settings_screen.dart';
-import 'package:hor_fit/screens/workouts/workout_main_screen.dart';
-import 'package:hor_fit/screens/workouts/plans/workout_plans_screen.dart';
+import 'package:hor_fit/screens/workouts/workout_overview_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -17,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    WorkoutMainScreen(),
+    WorkoutOverviewScreen(),
     DailyLogsScreen(),
     SettingsScreen()
   ];
