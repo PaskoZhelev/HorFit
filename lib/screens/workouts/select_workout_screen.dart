@@ -32,7 +32,7 @@ class _SelectWorkoutScreenState extends State<SelectWorkoutScreen> {
 
   void fetchWorkoutPlans(BuildContext context) async {
     final provider = Provider.of<WorkoutProvider>(context, listen: false);
-    provider.getWorkoutExerciseCount();
+    await provider.getWorkoutExerciseCount();
     await provider.loadWorkouts();
   }
 
