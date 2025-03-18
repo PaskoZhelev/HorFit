@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 const DB_NAME = 'hor_fit.db';
 
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 const CALS_COLOR = Colors.redAccent;
 const FAT_COLOR = Colors.orange;

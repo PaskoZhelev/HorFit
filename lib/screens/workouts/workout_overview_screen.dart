@@ -408,7 +408,7 @@ class WorkoutOverviewScreen extends StatelessWidget {
 
   String _formatDateTime(String dateTime) {
     final date = DateTime.parse(dateTime);
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
   String _formatDuration(String startDate, String endDate) {

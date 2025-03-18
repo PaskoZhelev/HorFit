@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hor_fit/models/exercise_models.dart';
 import 'package:hor_fit/models/food_models.dart';
+import 'package:hor_fit/models/weight_models.dart';
 import 'package:hor_fit/utils/constants.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
@@ -41,10 +42,24 @@ class DatabaseHelper {
   }
 
   // UPGRADE DATABASE TABLES
-  void _onUpgrade(Database db, int oldVersion, int newVersion) {
-    // if (oldVersion < 2) {
-    //   db.execute("ALTER TABLE tabEmployee ADD COLUMN newCol TEXT;");
-    // }
+  void _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    print(oldVersion);
+    print(newVersion);
+
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE weight_records (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          weight REAL NOT NULL,
+          date TEXT NOT NULL,
+          notes TEXT
+        )
+      ''');
+
+      // existing types: weight_reps,reps_only,distance,duration
+      await db.execute('ALTER TABLE exercise_sets ADD COLUMN set_type TEXT');
+      await db.execute('UPDATE exercise_sets SET set_type = "weight_reps" WHERE set_type IS NULL');
+    }
   }
 
   Future<void> resetDb(var dbPath) async {
@@ -812,4 +827,43 @@ class DatabaseHelper {
     return maps.map((map) => ExerciseHistory.fromJson(map)).toList();
   }
 
+// ---------------------------------------------------------------
+// Weight Methods
+// ---------------------------------------------------------------
+
+  Future<int> insertWeight(WeightRecord weight) async {
+    Database db = await database;
+    return await db.insert("weight_records", weight.toMap());
+  }
+
+  Future<List<WeightRecord>> getWeightRecords() async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      "weight_records",
+      orderBy: 'date DESC',
+    );
+
+    return List.generate(maps.length, (i) {
+      return WeightRecord.fromMap(maps[i]);
+    });
+  }
+
+  Future<int> updateWeight(WeightRecord weight) async {
+    Database db = await database;
+    return await db.update(
+      "weight_records",
+      weight.toMap(),
+      where: 'id = ?',
+      whereArgs: [weight.id],
+    );
+  }
+
+  Future<int> deleteWeight(int id) async {
+    Database db = await database;
+    return await db.delete(
+      "weight_records",
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

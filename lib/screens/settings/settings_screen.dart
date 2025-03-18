@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hor_fit/database/database_helper.dart';
+import 'package:hor_fit/screens/calculators/calorie_calculator.dart';
 import 'package:hor_fit/screens/exercises/exercises_list_screen.dart';
 import 'package:hor_fit/screens/food/food_list_screen.dart';
 import 'package:hor_fit/screens/mealPlan/food_plan_list_screen.dart';
+import 'package:hor_fit/screens/weight/weight_tracking_screen.dart';
 import 'package:hor_fit/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -147,6 +149,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children: [
                             Text(
                               'Exercises',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Spacer(),
+                            Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Divider(height: 1),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CalorieCalculator(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16.0,
+                          horizontal: 16.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Calorie Calculator',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Spacer(),
+                            Icon(Icons.chevron_right),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Divider(height: 1),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WeightTrackingPage(),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16.0,
+                          horizontal: 16.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              'Weight Tracking',
                               style: TextStyle(fontSize: 16),
                             ),
                             Spacer(),
