@@ -29,6 +29,9 @@ class _WorkoutPlansScreenState extends State<WorkoutPlansScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Workout Plans'),
+      ),
       floatingActionButton: FloatingActionButton(
         shape: CircleBorder(),
         backgroundColor: mainColor1,
@@ -91,7 +94,7 @@ class _WorkoutPlansScreenState extends State<WorkoutPlansScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text('Cancel', style: TextStyle(color: Colors.white)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),

@@ -98,8 +98,17 @@ class _EditWorkoutLogScreenState extends State<EditWorkoutLogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        final bool shouldPop = await _onWillPop();
+        if (context.mounted && shouldPop) {
+          Navigator.pop(context);
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text('Edit Workout'),

@@ -188,44 +188,16 @@ class _AddFoodPlanScreenState extends State<AddFoodPlanScreen> {
   Widget build(BuildContext context) {
     final macros = _totalMacros;
 
-    return WillPopScope(
-      onWillPop: () async {
-        // Check if there are any unsaved changes
-        bool hasChanges = _checkForChanges();
-
-        if (hasChanges) {
-          return await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Unsaved Changes'),
-              content: Text('Do you want to save your changes?'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    // Cancel pop
-                    Navigator.of(context).pop(false);
-                  },
-                  child: Text('Cancel', style: TextStyle(color: Colors.white),),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Discard changes and pop
-                    Navigator.of(context).pop(true);
-                  },
-                  child: Text('Discard', style: TextStyle(color: Colors.red),),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Save changes and pop
-                    _savePlan();
-                  },
-                  child: Text('Save', style: TextStyle(color: Colors.green),),
-                ),
-              ],
-            ),
-          ) ?? false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
         }
-        return true;
+        final bool shouldPop = await _onWillPop();
+        if (context.mounted && shouldPop) {
+          Navigator.pop(context);
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -381,6 +353,44 @@ class _AddFoodPlanScreenState extends State<AddFoodPlanScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> _onWillPop() async {
+    bool hasChanges = _checkForChanges();
+
+    if (hasChanges) {
+      return await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Unsaved Changes'),
+          content: Text('Do you want to save your changes?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Cancel pop
+                Navigator.of(context).pop(false);
+              },
+              child: Text('Cancel', style: TextStyle(color: Colors.white),),
+            ),
+            TextButton(
+              onPressed: () {
+                // Discard changes and pop
+                Navigator.of(context).pop(true);
+              },
+              child: Text('Discard', style: TextStyle(color: Colors.red),),
+            ),
+            TextButton(
+              onPressed: () {
+                // Save changes and pop
+                _savePlan();
+              },
+              child: Text('Save', style: TextStyle(color: Colors.green),),
+            ),
+          ],
+        ),
+      ) ?? false;
+    }
+    return true;
   }
 
   bool _checkForChanges() {

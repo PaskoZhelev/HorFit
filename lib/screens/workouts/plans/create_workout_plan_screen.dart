@@ -92,8 +92,17 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
+        final bool shouldPop = await _onWillPop();
+        if (context.mounted && shouldPop) {
+          Navigator.pop(context);
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(_isEditing ? 'Edit Workout' : 'Create Workout Plan'),
@@ -128,9 +137,17 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
+              child: ReorderableListView.builder(
                 itemCount: _exercises.length,
-                itemBuilder: (context, index) => _buildExerciseCard(index),
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    if (newIndex > oldIndex) newIndex -= 1;
+                    final item = _exercises.removeAt(oldIndex);
+                    _exercises.insert(newIndex, item);
+                  });
+                },
+                itemBuilder: (context, index) =>
+                    _buildExerciseCard(index, key: ValueKey(_exercises[index])),
               ),
             ),
           ],
@@ -139,7 +156,7 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
     );
   }
 
-  Widget _buildExerciseCard(int exerciseIndex) {
+  Widget _buildExerciseCard(int exerciseIndex, {required Key key}) {
     final exercise = _exercises[exerciseIndex];
     bool isExpanded = _expandedState[exerciseIndex] ?? false;
 
@@ -341,7 +358,7 @@ class _CreateWorkoutPlanScreenState extends State<CreateWorkoutPlanScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel', style: TextStyle(color: Colors.green)),
+            child: Text('Cancel', style: TextStyle(color: Colors.white)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),

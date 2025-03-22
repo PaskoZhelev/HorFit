@@ -158,7 +158,7 @@ class _WeightTrackingPageState extends State<WeightTrackingPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancel'),
+                  child: Text('Cancel', style: TextStyle(color: Colors.white)),
                 ),
                 // Save button
                 ElevatedButton(
@@ -249,7 +249,7 @@ class _WeightTrackingPageState extends State<WeightTrackingPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancel'),
+                  child: Text('Cancel', style: TextStyle(color: Colors.white)),
                 ),
                 // Save changes
                 ElevatedButton(
